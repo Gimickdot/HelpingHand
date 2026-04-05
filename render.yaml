@@ -3,7 +3,6 @@ services:
   - type: web
     name: asl-learning-app
     runtime: python
-    version: "3.11"
     buildCommand: "./build.sh"
     startCommand: "gunicorn asl_project.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 60"
     envVars:
