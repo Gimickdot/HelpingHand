@@ -1,0 +1,616 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Learning Guide</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('{% static "images/bg.png" %}') center center/cover no-repeat fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .learn-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+        }
+        
+        .title-box {
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 32px;
+            color: #FFD700;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+        
+        .header p {
+            font-size: 32px;
+            color: #FFFFFF;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            padding: 30px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px 20px;
+            background: #4a90e2;
+            border: 2px solid #357abd;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .nav-btn.practice {
+            background: #f1c40f;
+            border: 2px solid #d4ac0d;
+            color: #333;
+        }
+        
+        .nav-btn.game {
+            background: #27ae60;
+            border: 2px solid #1a8a4b;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            border-radius: 8px;
+        }
+        
+        .section h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .letter-card {
+            background: white;
+            border: 2px solid #8b7355;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        
+        .letter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .letter-card h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 24px;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+        
+        .letter-card p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .tips-section {
+            background: #e8f5e8;
+            border: 2px solid #27ae60;
+        }
+        
+        .tips-section h2 {
+            color: #27ae60;
+        }
+        
+        .tip-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .tip-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #d4c4a8;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .tip-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .tip-list li::before {
+            content: "💡";
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        
+        .common-signs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .sign-card {
+            background: white;
+            border: 2px solid #9b59b6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .sign-card h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            color: #9b59b6;
+            margin-bottom: 10px;
+        }
+        
+        .sign-card p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .practice-section {
+            background: #fff3cd;
+            border: 2px solid #f1c40f;
+        }
+        
+        .practice-section h2 {
+            color: #f39c12;
+        }
+        
+        .practice-steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+        
+        .practice-steps li {
+            counter-increment: step-counter;
+            padding: 15px 0;
+            border-bottom: 1px solid #d4c4a8;
+            font-size: 14px;
+            position: relative;
+            padding-left: 40px;
+        }
+        
+        .practice-steps li:last-child {
+            border-bottom: none;
+        }
+        
+        .practice-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 15px;
+            background: #f39c12;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .alphabet-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+            }
+            
+            .common-signs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="https://asl-project-static.s3.amazonaws.com/guide/audio/bgm.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="https://asl-project-static.s3.amazonaws.com/guide/audio/buttons.mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    
+    <div class="header">
+        <div class="title-box">
+            <div class="learn-icon">📚</div>
+            <h1>ASL Learning Guide</h1>
+            <p>Master American Sign Language Alphabet and Common Signs</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="nav-buttons">
+            {% if user.is_authenticated %}
+            <a href="{% url 'home' %}" class="nav-btn">← HOME</a>
+            {% else %}
+            <a href="{% url 'index' %}" class="nav-btn">← HOME</a>
+            {% endif %}
+            <a href="{% url 'webcam' %}" class="nav-btn practice">PRACTICE MODE</a>
+            <a href="{% url 'game' %}" class="nav-btn game">PLAY GAME</a>
+        </div>
+        
+        <div class="section">
+            <h2>📚 ASL Alphabet Guide</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">Click on any letter to learn how to sign it!</p>
+            
+            <div class="alphabet-grid">
+                <div class="letter-card" data-letter="A" onclick="showLetterInfo('A')">
+                    <h3>A</h3>
+                    <p>Make a fist with thumb pointing up</p>
+                </div>
+                <div class="letter-card" data-letter="B" onclick="showLetterInfo('B')">
+                    <h3>B</h3>
+                    <p>Fingers straight up, thumb tucked</p>
+                </div>
+                <div class="letter-card" data-letter="C" onclick="showLetterInfo('C')">
+                    <h3>C</h3>
+                    <p>Curve hand into C shape</p>
+                </div>
+                <div class="letter-card" data-letter="D" onclick="showLetterInfo('D')">
+                    <h3>D</h3>
+                    <p>Fingers form O shape, index finger pointing up</p>
+                </div>
+                <div class="letter-card" data-letter="E" onclick="showLetterInfo('E')">
+                    <h3>E</h3>
+                    <p>Fingers bent, thumb bent below fingers</p>
+                </div>
+                <div class="letter-card" data-letter="F" onclick="showLetterInfo('F')">
+                    <h3>F</h3>
+                    <p>Index and thumb touch, others up</p>
+                </div>
+                <div class="letter-card" data-letter="G" onclick="showLetterInfo('G')">
+                    <h3>G</h3>
+                    <p>Index and thumb straight, parallel</p>
+                </div>
+                <div class="letter-card" data-letter="H" onclick="showLetterInfo('H')">
+                    <h3>H</h3>
+                    <p>Index, middle finger, and thumb straight, parallel</p>
+                </div>
+                <div class="letter-card" data-letter="I" onclick="showLetterInfo('I')">
+                    <h3>I</h3>
+                    <p>Pinky finger up, others down</p>
+                </div>
+                <div class="letter-card" data-letter="J" onclick="showLetterInfo('J')">
+                    <h3>J</h3>
+                    <p>Pinky tilt to side or parallel others curved</p>
+                </div>
+                <div class="letter-card" data-letter="K" onclick="showLetterInfo('K')">
+                    <h3>K</h3>
+                    <p>Index and middle up, thumb between</p>
+                </div>
+                <div class="letter-card" data-letter="L" onclick="showLetterInfo('L')">
+                    <h3>L</h3>
+                    <p>Index and thumb form L shape</p>
+                </div>
+                <div class="letter-card" data-letter="M" onclick="showLetterInfo('M')">
+                    <h3>M</h3>
+                    <p>Three fingers down on thumb</p>
+                </div>
+                <div class="letter-card" data-letter="N" onclick="showLetterInfo('N')">
+                    <h3>N</h3>
+                    <p>Two fingers down on thumb</p>
+                </div>
+                <div class="letter-card" data-letter="O" onclick="showLetterInfo('O')">
+                    <h3>O</h3>
+                    <p>Fingers and thumb form O shape</p>
+                </div>
+                <div class="letter-card" data-letter="P" onclick="showLetterInfo('P')">
+                    <h3>P</h3>
+                    <p>Point to the side</p>
+                </div>
+                <div class="letter-card" data-letter="Q" onclick="showLetterInfo('Q')">
+                    <h3>Q</h3>
+                    <p>Like G but pointing down</p>
+                </div>
+                <div class="letter-card" data-letter="R" onclick="showLetterInfo('R')">
+                    <h3>R</h3>
+                    <p>Index and middle crossed</p>
+                </div>
+                <div class="letter-card" data-letter="S" onclick="showLetterInfo('S')">
+                    <h3>S</h3>
+                    <p>Fingers curled and thumb tucked inside fingers</p>
+                </div>
+                <div class="letter-card" data-letter="T" onclick="showLetterInfo('T')">
+                    <h3>T</h3>
+                    <p>Thumb and index bent like an L shape, others tucked</p>
+                </div>
+                <div class="letter-card" data-letter="U" onclick="showLetterInfo('U')">
+                    <h3>U</h3>
+                    <p>Index and middle up together</p>
+                </div>
+                <div class="letter-card" data-letter="V" onclick="showLetterInfo('V')">
+                    <h3>V</h3>
+                    <p>Index and middle spread apart</p>
+                </div>
+                <div class="letter-card" data-letter="W" onclick="showLetterInfo('W')">
+                    <h3>W</h3>
+                    <p>Index, middle, ring spread</p>
+                </div>
+                <div class="letter-card" data-letter="X" onclick="showLetterInfo('X')">
+                    <h3>X</h3>
+                    <p>Index finger bent, others down</p>
+                </div>
+                <div class="letter-card" data-letter="Y" onclick="showLetterInfo('Y')">
+                    <h3>Y</h3>
+                    <p>Thumb and pinky up</p>
+                </div>
+                <div class="letter-card" data-letter="Z" onclick="showLetterInfo('Z')">
+                    <h3>Z</h3>
+                    <p>Index points to the upper left side</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section tips-section">
+            <h2>💡 Pro Tips for Learning ASL</h2>
+            <ul class="tip-list">
+                <li>Practice in front of a mirror to check your hand positions</li>
+                <li>Start with the most common letters first (A, E, I, O, S, T, R, N)</li>
+                <li>Keep your hand relaxed but firm - don't strain your fingers</li>
+                <li>Practice signing your name and simple words</li>
+                <li>Watch videos of native ASL signers to learn proper form</li>
+                <li>Sign slowly at first, then gradually increase your speed</li>
+                <li>Practice daily for 15-20 minutes for best results</li>
+            </ul>
+        </div>
+        
+        <div class="section practice-section">
+            <h2>🎯 Practice Routine</h2>
+            <ol class="practice-steps">
+                <li>Start with hand stretches to warm up your fingers</li>
+                <li>Practice each letter of the alphabet slowly and deliberately</li>
+                <li>Spell out simple 3-letter words (CAT, DOG, SUN)</li>
+                <li>Try spelling your own name multiple times</li>
+                <li>Practice common signs like HELLO and THANK YOU</li>
+                <li>Test yourself by trying to sign without looking</li>
+                <li>Use the Practice Mode to test your recognition skills</li>
+                <li>Challenge yourself with the ASL Game when ready!</li>
+            </ol>
+        </div>
+        
+        <div id="letterModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+            <div style="background: white; padding: 30px; border-radius: 10px; max-width: 500px; text-align: center; border: 3px solid #8b7355;">
+                <h2 id="modalTitle" style="font-family: 'Press Start 2P', cursive; font-size: 32px; color: #27ae60; margin-bottom: 20px;"></h2>
+                <img id="modalImage" style="width: 200px; height: 200px; margin-bottom: 20px; border: 2px solid #8b7355; border-radius: 8px; object-fit: cover;" alt="ASL Sign">
+                <p id="modalContent" style="font-size: 16px; color: #666; margin-bottom: 20px;"></p>
+                <button onclick="closeModal()" style="font-family: 'Press Start 2P', cursive; font-size: 10px; padding: 10px 20px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">CLOSE</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                }
+            });
+        }
+        
+        // Start BGM on page load
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            bgmAudio.src = 'https://asl-project-static.s3.amazonaws.com/guide/audio/bgm.mp3';
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            }
+            
+            // Play BGM unless explicitly stopped
+            if (bgmState !== 'stopped') {
+                bgmAudio.play().then(() => {
+                    sessionStorage.setItem('bgmState', 'playing');
+                }).catch(err => {
+                    document.addEventListener('click', function playOnFirstClick() {
+                        bgmAudio.play().then(() => {
+                            sessionStorage.setItem('bgmState', 'playing');
+                        });
+                        document.removeEventListener('click', playOnFirstClick);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('a, button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+        
+        // Letter information modal
+        function showLetterInfo(letter) {
+            const modal = document.getElementById('letterModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            const image = document.getElementById('modalImage');
+            
+            const letterDetails = {
+                'A': { desc: 'Make a fist with your thumb pointing straight up. Keep your other fingers curled down.', img: '{{ DATASET_URL }}A/A1780.jpg' },
+                'B': { desc: 'Keep your fingers straight up and together. Tuck your thumb into your palm.', img: '{{ DATASET_URL }}B/B1973.jpg' },
+                'C': { desc: 'Curve your hand into a C shape, as if holding a cup.', img: '{{ DATASET_URL }}C/C98.jpg' },
+                'D': { desc: 'Point your index finger straight up. Curve your other fingers down.', img: '{{ DATASET_URL }}D/D2242.jpg' },
+                'E': { desc: 'Bend all your fingers down. Place your thumb on top of your fingertips.', img: '{{ DATASET_URL }}E/E1089.jpg' },
+                'F': { desc: 'Touch your thumb to your index finger. Keep your other three fingers straight up.', img: '{{ DATASET_URL }}F/F1261.jpg' },
+                'G': { desc: 'Point your index finger and thumb straight out, parallel to each other.', img: '{{ DATASET_URL }}G/G1156.jpg' },
+                'H': { desc: 'Extend your index and middle fingers together, pointing forward.', img: '{{ DATASET_URL }}H/H1199.jpg' },
+                'I': { desc: 'Point your pinky finger straight up. Keep other fingers down.', img: '{{ DATASET_URL }}I/I1081.jpg' },
+                'J': { desc: 'Like I, but draw the letter J in the air with your pinky.', img: '{{ DATASET_URL }}J/J1088.jpg' },
+                'K': { desc: 'Point your index and middle fingers up. Place your thumb between them.', img: '{{ DATASET_URL }}K/K1569.jpg' },
+                'L': { desc: 'Extend your thumb and index finger to form an L shape.', img: '{{ DATASET_URL }}L/L864.jpg' },
+                'M': { desc: 'Tuck your thumb under your first three fingers.', img: '{{ DATASET_URL }}M/M1338.jpg' },
+                'N': { desc: 'Tuck your thumb under your first two fingers.', img: '{{ DATASET_URL }}N/N1274.jpg' },
+                'O': { desc: 'Touch your fingertips to your thumb tip, forming an O.', img: '{{ DATASET_URL }}O/O2321.jpg' },
+                'P': { desc: 'Like K, but point your hand downward.', img: '{{ DATASET_URL }}P/P1985.jpg' },
+                'Q': { desc: 'Like G, but point your hand downward.', img: '{{ DATASET_URL }}Q/Q965.jpg' },
+                'R': { desc: 'Cross your index and middle fingers.', img: '{{ DATASET_URL }}R/R1091.jpg' },
+                'S': { desc: 'Make a fist with your thumb resting over your fingers.', img: '{{ DATASET_URL }}S/S1582.jpg' },
+                'T': { desc: 'Tuck your thumb between your index and middle fingers.', img: '{{ DATASET_URL }}T/T1269.jpg' },
+                'U': { desc: 'Point your index and middle fingers up together.', img: '{{ DATASET_URL }}U/U880.jpg' },
+                'V': { desc: 'Spread your index and middle fingers apart in a V shape.', img: '{{ DATASET_URL }}V/V1199.jpg' },
+                'W': { desc: 'Spread your index, middle, and ring fingers apart.', img: '{{ DATASET_URL }}W/W1001.jpg' },
+                'X': { desc: 'Bend your index finger at a right angle. Keep other fingers down.', img: '{{ DATASET_URL }}X/X909.jpg' },
+                'Y': { desc: 'Extend your thumb and pinky finger up.', img: '{{ DATASET_URL }}Y/Y977.jpg' },
+                'Z': { desc: 'Draw the letter Z in the air with your index finger.', img: '{{ DATASET_URL }}Z/Z1040.jpg' }
+            };
+            
+            const letterInfo = letterDetails[letter];
+            if (letterInfo) {
+                title.textContent = letter;
+                content.textContent = letterInfo.desc;
+                image.src = letterInfo.img;
+                image.alt = `ASL sign for letter ${letter}`;
+                
+                // Handle image loading error
+                image.onerror = function() {
+                    this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSIxMDAiIHk9IjEwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQ4IiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzY2N2VlYSI+J3srbGV0dGVyK308L3RleHQ+Cjwvc3ZnPg==';
+                };
+                
+                modal.style.display = 'flex';
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('letterModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('letterModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1346 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Training Room</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/static/images/bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            overflow: auto;
+        }
+        
+        .title-box {
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 400px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        .title-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .title-icon {
+            font-size: 48px;
+            color: #808080;
+        }
+        
+        .title-text {
+            text-align: center;
+        }
+        
+        .title-text h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #FFD700;
+            font-size: 24px;
+            margin: 0 0 8px 0;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+        }
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            align-items: flex-start;
+        }
+        
+        .left-panel {
+            width: 240px;
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            padding: 15px;
+            height: 100%;
+            overflow: hidden;
+            position: sticky;
+            top: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .left-panel.hidden {
+            display: none;
+        }
+        
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .side-panel {
+            width: 320px;
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            padding: 15px;
+            height: auto;
+            position: sticky;
+            top: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .side-panel.hidden {
+            display: none;
+        }
+        
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        .image-modal.active {
+            display: flex;
+        }
+        
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            border: 4px solid #f5e6c8;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            cursor: default;
+        }
+        
+        .modal-letter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .nav-links {
+            margin-bottom: 10px;
+        }
+        
+        .nav-links a {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 10px 16px;
+            background: #4a90e2;
+            border: 2px solid #357abd;
+            color: white;
+            text-decoration: none;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+        
+        .nav-links a:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .spelled-text {
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            padding: 12px;
+            margin-bottom: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .spelled-text h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            color: #8b7355;
+            margin-bottom: 8px;
+        }
+        
+        #spelledText {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2e8b57;
+            min-height: 30px;
+            padding: 8px;
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 10px;
+            background: #000;
+            border: 3px solid #333;
+            overflow: hidden;
+            flex: 1;
+            min-height: 0;
+            aspect-ratio: 4/3;
+        }
+        
+        #video, #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .controls button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 10px 14px;
+            border: 2px solid;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .controls button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        #startBtn {
+            background: #27ae60;
+            border-color: #1a8a4b;
+            color: white;
+        }
+        
+        #stopBtn {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+        
+        #clearBtn, #toggleGuideBtn, #toggleInstructionsBtn {
+            background: #f1c40f;
+            border-color: #d4ac0d;
+            color: #333;
+        }
+        
+        .controls button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        #loading {
+            text-align: center;
+            padding: 10px;
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            margin-bottom: 10px;
+            display: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 10px;
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
+        .prediction-box {
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            padding: 12px;
+            text-align: center;
+            margin-bottom: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .prediction-box h2 {
+            font-size: 32px;
+            color: #8b7355;
+            margin: 5px 0;
+        }
+        
+        .confidence {
+            color: #2e8b57;
+            font-weight: bold;
+        }
+        
+        .instructions {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+        }
+        
+        .instructions h4 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            color: #8b7355;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            height: calc(100% - 40px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .instructions li {
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            margin-bottom: 10px;
+            padding: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .asl-guide {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+        }
+        
+        .asl-guide h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            color: #8b7355;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(60px, 1fr));
+            gap: 8px;
+        }
+        
+        .letter-card {
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            padding: 6px 4px 4px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .letter-card:hover {
+            transform: scale(1.02);
+            border-color: #8b7355;
+        }
+        
+        .letter-card img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            background: #f6f7fb;
+        }
+        
+        .letter-card span {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .letter-card.active {
+            border-color: #8b7355;
+            background: rgba(139, 115, 85, 0.1);
+        }
+        
+        .hand-not-detected {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .prediction-text.correct {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+                overflow-x: hidden;
+            }
+            
+            .title-box {
+                padding: 15px;
+                margin-bottom: 15px;
+                position: relative;
+                z-index: 10;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            .subtitle {
+                font-size: 12px;
+            }
+            
+            .container {
+                flex-direction: column;
+                gap: 15px;
+                overflow-y: auto;
+                position: relative;
+            }
+            
+            .side-panel {
+                width: 100%;
+                position: relative;
+                order: 2;
+                max-height: none;
+                overflow-y: visible;
+                z-index: 1;
+                background: #f5e6c8;
+                border: 3px solid #8b7355;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .side-panel.hidden {
+                display: none;
+            }
+            
+            .left-panel {
+                order: 1;
+                width: 100%;
+                position: relative;
+                max-height: none;
+                overflow-y: visible;
+                z-index: 1;
+                background: #f5e6c8;
+                border: 3px solid #8b7355;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .main-content {
+                order: 3;
+                width: 100%;
+                position: relative;
+                z-index: 1;
+            }
+            
+            .asl-guide h3 {
+                font-size: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .alphabet-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 4px;
+            }
+            
+            .letter-card {
+                padding: 2px;
+            }
+            
+            .letter-card img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .letter-card .letter-label {
+                font-size: 8px;
+            }
+            
+            .instructions {
+                padding: 10px;
+            }
+            
+            .instructions h4 {
+                font-size: 10px;
+                margin-bottom: 8px;
+            }
+            
+            .instructions ul {
+                font-size: 9px;
+                line-height: 1.3;
+            }
+            
+            .video-container {
+                height: 300px;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .pixel-btn {
+                padding: 8px 12px;
+                font-size: 9px;
+            }
+            
+            .prediction-box {
+                padding: 8px;
+                font-size: 12px;
+            }
+            
+            .confidence-bar {
+                height: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 2px;
+            }
+            
+            .title-box {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            h1 {
+                font-size: 14px;
+            }
+            
+            .subtitle {
+                font-size: 10px;
+            }
+            
+            .side-panel {
+                max-height: 150px;
+            }
+            
+            .asl-guide h3 {
+                font-size: 7px;
+                margin-bottom: 6px;
+            }
+            
+            .alphabet-grid {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 2px;
+            }
+            
+            .letter-card {
+                padding: 1px;
+            }
+            
+            .letter-card img {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .letter-card .letter-label {
+                font-size: 6px;
+            }
+            
+            .instructions {
+                padding: 8px;
+            }
+            
+            .instructions h4 {
+                font-size: 8px;
+                margin-bottom: 6px;
+            }
+            
+            .instructions ul {
+                font-size: 7px;
+                line-height: 1.2;
+            }
+            
+            .video-container {
+                height: 250px;
+            }
+            
+            .pixel-btn {
+                padding: 6px 8px;
+                font-size: 7px;
+            }
+            
+            .prediction-box {
+                padding: 6px;
+                font-size: 10px;
+            }
+            
+            .confidence-bar {
+                height: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static "audio/buttons.mp3" %}" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    <div class="title-box">
+        <div class="title-content">
+            <div class="title-icon">📷</div>
+            <div class="title-text">
+                <h1>ASL Practice Mode</h1>
+                <p class="subtitle">Master your ASL skills</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="left-panel" id="leftPanel">
+            <div class="instructions">
+                <h4>INSTRUCTIONS</h4>
+                <ul>
+                    <li>Click "Start Camera" and allow webcam access</li>
+                    <li>Show your hand clearly in front of the camera</li>
+                    <li>Hold each ASL letter steady for 1 second to register</li>
+                    <li>Use "DEL" gesture to delete the last character</li>
+                    <li>Use "SPACE" gesture to add a space</li>
+                    <li>Press "Clear Text" to reset the spelled text</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="nav-links">
+                <a href="{% url 'home' %}">← HOME</a>
+            </div>
+            
+            <div class="spelled-text">
+                <h3>SPELLED TEXT</h3>
+                <div id="spelledText"></div>
+            </div>
+            
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+            
+            <div class="controls">
+                <button id="startBtn">START CAMERA</button>
+                <button id="stopBtn" disabled>STOP</button>
+                <button id="clearBtn">CLEAR</button>
+                <button id="toggleGuideBtn">GUIDE</button>
+                <button id="toggleInstructionsBtn">HELP</button>
+            </div>
+            
+            <div id="loading">PROCESSING...</div>
+            
+            <div class="status" id="status">
+                Click "Start Camera" to begin ASL Training
+            </div>
+            
+            <div class="prediction-box" id="predictionBox" style="display: none;">
+                <div>DETECTED LETTER</div>
+                <h2 id="prediction">-</h2>
+                <div class="confidence" id="confidence"></div>
+            </div>
+        </div>
+        
+        <div class="side-panel" id="sidePanel">
+            <div class="asl-guide">
+                <h3>📖 ASL Alphabet Guide</h3>
+                <div class="alphabet-grid">
+                    <div class="letter-card" data-letter="A">
+                        <img src="{{ DATASET_URL }}A/A1780.jpg" alt="A" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkE8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>A</span>
+                    </div>
+                    <div class="letter-card" data-letter="B">
+                        <img src="{{ DATASET_URL }}B/B1973.jpg" alt="B" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkJPC90ZXh0Pgo8L3N2Zz4='">
+                        <span>B</span>
+                    </div>
+                    <div class="letter-card" data-letter="C">
+                        <img src="{{ DATASET_URL }}C/C98.jpg" alt="C" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkM8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>C</span>
+                    </div>
+                    <div class="letter-card" data-letter="D">
+                        <img src="{{ DATASET_URL }}D/D2242.jpg" alt="D" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkQ8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>D</span>
+                    </div>
+                    <div class="letter-card" data-letter="E">
+                        <img src="{{ DATASET_URL }}E/E1089.jpg" alt="E" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkU8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>E</span>
+                    </div>
+                    <div class="letter-card" data-letter="F">
+                        <img src="{{ DATASET_URL }}F/F1261.jpg" alt="F" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkY8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>F</span>
+                    </div>
+                    <div class="letter-card" data-letter="G">
+                        <img src="{{ DATASET_URL }}G/G1156.jpg" alt="G" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkc8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>G</span>
+                    </div>
+                    <div class="letter-card" data-letter="H">
+                        <img src="{{ DATASET_URL }}H/H1199.jpg" alt="H" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkg8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>H</span>
+                    </div>
+                    <div class="letter-card" data-letter="I">
+                        <img src="{{ DATASET_URL }}I/I1081.jpg" alt="I" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+STwvdGV4dD4KPC9zdmc+'">
+                        <span>I</span>
+                    </div>
+                    <div class="letter-card" data-letter="J">
+                        <img src="{{ DATASET_URL }}J/J1088.jpg" alt="J" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+SjwvdGV4dD4KPC9zdmc+'">
+                        <span>J</span>
+                    </div>
+                    <div class="letter-card" data-letter="K">
+                        <img src="{{ DATASET_URL }}K/K1569.jpg" alt="K" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+SzwvdGV4dD4KPC9zdmc+'">
+                        <span>K</span>
+                    </div>
+                    <div class="letter-card" data-letter="L">
+                        <img src="{{ DATASET_URL }}L/L864.jpg" alt="L" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+TDwvdGV4dD4KPC9zdmc+'">
+                        <span>L</span>
+                    </div>
+                    <div class="letter-card" data-letter="M">
+                        <img src="{{ DATASET_URL }}M/M1338.jpg" alt="M" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPk08L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>M</span>
+                    </div>
+                    <div class="letter-card" data-letter="N">
+                        <img src="{{ DATASET_URL }}N/N1274.jpg" alt="N" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPk48L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>N</span>
+                    </div>
+                    <div class="letter-card" data-letter="O">
+                        <img src="{{ DATASET_URL }}O/O2321.jpg" alt="O" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPk88L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>O</span>
+                    </div>
+                    <div class="letter-card" data-letter="P">
+                        <img src="{{ DATASET_URL }}P/P1985.jpg" alt="P" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlA8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>P</span>
+                    </div>
+                    <div class="letter-card" data-letter="Q">
+                        <img src="{{ DATASET_URL }}Q/Q965.jpg" alt="Q" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlE8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>Q</span>
+                    </div>
+                    <div class="letter-card" data-letter="R">
+                        <img src="{{ DATASET_URL }}R/R1091.jpg" alt="R" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlI8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>R</span>
+                    </div>
+                    <div class="letter-card" data-letter="S">
+                        <img src="{{ DATASET_URL }}S/S1582.jpg" alt="S" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlM8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>S</span>
+                    </div>
+                    <div class="letter-card" data-letter="T">
+                        <img src="{{ DATASET_URL }}T/T1269.jpg" alt="T" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlQ8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>T</span>
+                    </div>
+                    <div class="letter-card" data-letter="U">
+                        <img src="{{ DATASET_URL }}U/U880.jpg" alt="U" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlU8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>U</span>
+                    </div>
+                    <div class="letter-card" data-letter="V">
+                        <img src="{{ DATASET_URL }}V/V1199.jpg" alt="V" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlY8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>V</span>
+                    </div>
+                    <div class="letter-card" data-letter="W">
+                        <img src="{{ DATASET_URL }}W/W1001.jpg" alt="W" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+VzwvdGV4dD4KPC9zdmc+'">
+                        <span>W</span>
+                    </div>
+                    <div class="letter-card" data-letter="X">
+                        <img src="{{ DATASET_URL }}X/X909.jpg" alt="X" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+WDwvdGV4dD4KPC9zdmc+'">
+                        <span>X</span>
+                    </div>
+                    <div class="letter-card" data-letter="Y">
+                        <img src="{{ DATASET_URL }}Y/Y977.jpg" alt="Y" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+WTwvdGV4dD4KPC9zdmc+'">
+                        <span>Y</span>
+                    </div>
+                    <div class="letter-card" data-letter="Z">
+                        <img src="{{ DATASET_URL }}Z/Z1040.jpg" alt="Z" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWE+WjwvdGV4dD4KPC9zdmc+'">
+                        <span>Z</span>
+                    </div>
+                    <div class="letter-card" data-letter="del">
+                        <img src="{{ DATASET_URL }}del/del77.jpg" alt="DEL" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyMCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkRFTDwvdGV4dD4KPC9zdmc+'">
+                        <span>DEL</span>
+                    </div>
+                    <div class="letter-card" data-letter="space">
+                        <img src="{{ DATASET_URL }}space/space8.jpg" alt="SPACE" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1saXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlNQQUNFPC90ZXh0Pgo8L3N2Zz4='">
+                        <span>SPACE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal for Enlarged ASL Guide -->
+    <div class="image-modal" id="imageModal">
+        <div class="modal-letter" id="modalLetter"></div>
+        <img class="modal-image" id="modalImage" src="" alt="">
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const toggleGuideBtn = document.getElementById('toggleGuideBtn');
+        const toggleInstructionsBtn = document.getElementById('toggleInstructionsBtn');
+        const sidePanel = document.getElementById('sidePanel');
+        const leftPanel = document.getElementById('leftPanel');
+        const status = document.getElementById('status');
+        const predictionBox = document.getElementById('predictionBox');
+        const predictionEl = document.getElementById('prediction');
+        const confidenceEl = document.getElementById('confidence');
+        const spelledTextEl = document.getElementById('spelledText');
+        const loading = document.getElementById('loading');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalLetter = document.getElementById('modalLetter');
+        
+        let stream = null;
+        let isRunning = false;
+        let spelledText = '';
+        let lastChar = '';
+        let lastSeenChar = '';
+        let confirmationCount = 0;
+        let requiredConfirmations = 3;
+        let cooldownSeconds = 1000;
+        let lastAddedTime = 0;
+        let handType = 'unknown';
+        let handTypeHistory = [];
+        
+        // Set canvas size
+        canvas.width = 640;
+        canvas.height = 480;
+        
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: 640, 
+                        height: 480 
+                    } 
+                });
+                video.srcObject = stream;
+                isRunning = true;
+                
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                loading.style.display = 'block';
+                status.innerHTML = '<span class="hand-detected">Camera started! Initializing hand detection...</span>';
+                
+                // Start prediction loop after a short delay
+                setTimeout(predictLoop, 1000);
+            } catch (err) {
+                status.innerHTML = `<span class="hand-not-detected">Error: ${err.message}</span>`;
+            }
+        }
+        
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+            }
+            video.srcObject = null;
+            isRunning = false;
+            
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            predictionBox.style.display = 'none';
+            status.textContent = 'Camera stopped.';
+        }
+        
+        function clearText() {
+            spelledText = '';
+            spelledTextEl.textContent = '';
+            status.innerHTML = '<span class="hand-detected">Text cleared!</span>';
+        }
+        
+        async function predictLoop() {
+            if (!isRunning) return;
+            
+            // Draw video frame first
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            try {
+                const response = await fetch('/api/predict/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    // Redraw video and show error
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    status.innerHTML = `<span class="hand-not-detected">Error: ${result.error}</span>`;
+                    predictionBox.style.display = 'none';
+                } else if (result.hand_detected) {
+                    predictionBox.style.display = 'block';
+                    loading.style.display = 'none';
+                    
+                    // Draw video frame, then landmarks on top
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    // Draw landmarks and bounding box only if hand is detected
+                    if (result.normalized_coords) {
+                        drawLandmarks(result.normalized_coords);
+                        drawBoundingBox(result.normalized_coords, result.prediction || result.raw_prediction);
+                    }
+                    
+                    const currentTime = Date.now();
+                    
+                    if (result.prediction) {
+                        const predChar = result.prediction;
+                        const confidence = result.confidence;
+                        
+                        // Enhanced accuracy for A and S
+                        let adjustedConfidence = confidence;
+                        let adjustedPrediction = predChar;
+                        
+                        if (result.normalized_coords) {
+                            // Detect hand type and adjust predictions
+                            const detectedHandType = detectHandType(result.normalized_coords);
+                            handTypeHistory.push(detectedHandType);
+                            if (handTypeHistory.length > 5) handTypeHistory.shift();
+                            
+                            const mostCommonHandType = getMostCommon(handTypeHistory);
+                            
+                            // Apply hand-specific adjustments for A and S
+                            if (predChar === 'A' || predChar === 'S') {
+                                adjustedConfidence = enhanceASAccuracy(predChar, result.normalized_coords, mostCommonHandType, confidence);
+                            }
+                        }
+                        
+                        predictionEl.textContent = adjustedPrediction;
+                        confidenceEl.textContent = `Confidence: ${(adjustedConfidence * 100).toFixed(1)}%`;
+                        
+                        // Always process predictions with 20% threshold
+                        if (adjustedConfidence >= 0.20) {
+                            if (adjustedPrediction === lastSeenChar) {
+                                confirmationCount++;
+                            } else {
+                                confirmationCount = 1;
+                                lastSeenChar = adjustedPrediction;
+                            }
+                            
+                            status.innerHTML = `<span class="hand-detected">Hand detected! Prediction: ${adjustedPrediction} (${confirmationCount}/${requiredConfirmations})</span>`;
+                        } else {
+                            predictionEl.textContent = adjustedPrediction;
+                            confidenceEl.textContent = `Confidence: ${(adjustedConfidence * 100).toFixed(1)}% (below 20% threshold)`;
+                            confirmationCount = 0; // Reset on low confidence
+                            status.innerHTML = `<span class="hand-detected">Hand detected but confidence too low</span>`;
+                        }
+                        
+                        // Only register after required confirmations and cooldown
+                        if (confirmationCount >= requiredConfirmations) {
+                            if ((adjustedPrediction !== lastChar) || (currentTime - lastAddedTime >= cooldownSeconds)) {
+                                if (adjustedPrediction.toLowerCase() === 'del') {
+                                    spelledText = spelledText.slice(0, -1);
+                                } else if (adjustedPrediction.toLowerCase() === 'space') {
+                                    spelledText += ' ';
+                                } else {
+                                    spelledText += adjustedPrediction;
+                                }
+                                lastChar = adjustedPrediction;
+                                lastAddedTime = currentTime;
+                                spelledTextEl.textContent = spelledText;
+                                confirmationCount = 0; // Reset after registering
+                            }
+                        }
+                    }
+                } else {
+                    // Draw video frame when no hand detected
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    predictionBox.style.display = 'none';
+                    status.innerHTML = '<span class="hand-not-detected">No hand detected</span>';
+                }
+                
+            } catch (err) {
+                // Draw video frame on error
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                loading.style.display = 'none';
+                status.innerHTML = `<span class="hand-not-detected">Prediction error: ${err.message}</span>`;
+            }
+            
+            // Continue loop (process every 200ms to avoid overwhelming the server)
+            setTimeout(predictLoop, 200);
+        }
+        
+        // Draw landmarks on canvas
+        function drawLandmarks(coords) {
+            // Draw connections (simplified hand skeleton)
+            const connections = [
+                [0, 1], [1, 2], [2, 3], [3, 4],  // Thumb
+                [0, 5], [5, 6], [6, 7], [7, 8],  // Index
+                [0, 9], [9, 10], [10, 11], [11, 12],  // Middle
+                [0, 13], [13, 14], [14, 15], [15, 16],  // Ring
+                [0, 17], [17, 18], [18, 19], [19, 20],  // Pinky
+                [5, 9], [9, 13], [13, 17]  // Palm connections
+            ];
+            
+            ctx.strokeStyle = '#00FF00';
+            ctx.lineWidth = 3;
+            
+            connections.forEach(([start, end]) => {
+                const startPt = coords[start];
+                const endPt = coords[end];
+                ctx.beginPath();
+                ctx.moveTo(startPt.x * canvas.width, startPt.y * canvas.height);
+                ctx.lineTo(endPt.x * canvas.width, endPt.y * canvas.height);
+                ctx.stroke();
+            });
+            
+            // Draw landmark points
+            coords.forEach((pt, i) => {
+                ctx.beginPath();
+                ctx.arc(pt.x * canvas.width, pt.y * canvas.height, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = i === 0 ? '#FF0000' : '#00FF00';  // Wrist is red
+                ctx.fill();
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+        
+        // Draw bounding box around hand
+        function drawBoundingBox(coords, prediction) {
+            let minX = 1, minY = 1, maxX = 0, maxY = 0;
+            
+            coords.forEach(pt => {
+                minX = Math.min(minX, pt.x);
+                minY = Math.min(minY, pt.y);
+                maxX = Math.max(maxX, pt.x);
+                maxY = Math.max(maxY, pt.y);
+            });
+            
+            // Add padding
+            const padding = 20;
+            minX = Math.max(0, minX * canvas.width - padding);
+            minY = Math.max(0, minY * canvas.height - padding);
+            maxX = Math.min(canvas.width, maxX * canvas.width + padding);
+            maxY = Math.min(canvas.height, maxY * canvas.height + padding);
+            
+            // Draw box
+            ctx.strokeStyle = '#00FF00';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
+            
+            // Draw prediction label
+            if (prediction) {
+                ctx.fillStyle = '#00FF00';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(prediction, minX + 5, minY - 10);
+            }
+        }
+        
+        // Helper functions for enhanced A and S detection
+        function detectHandType(coords) {
+            if (!coords || coords.length < 21) return 'unknown';
+            
+            // Use thumb position relative to palm to determine handedness
+            const thumbTip = coords[4];
+            const indexTip = coords[8];
+            const middleTip = coords[12];
+            const ringTip = coords[16];
+            const pinkyTip = coords[20];
+            const wrist = coords[0];
+            
+            // Calculate thumb position relative to other fingers
+            const thumbX = thumbTip.x;
+            const avgFingerX = (indexTip.x + middleTip.x + ringTip.x + pinkyTip.x) / 4;
+            
+            // If thumb is significantly to the right of other fingers, likely right hand
+            // If thumb is significantly to the left, likely left hand
+            const thumbOffset = thumbX - avgFingerX;
+            
+            return thumbOffset > 0.1 ? 'right' : thumbOffset < -0.1 ? 'left' : 'unknown';
+        }
+        
+        function getMostCommon(arr) {
+            if (arr.length === 0) return 'unknown';
+            const counts = {};
+            arr.forEach(item => {
+                counts[item] = (counts[item] || 0) + 1;
+            });
+            return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+        }
+        
+        function enhanceASAccuracy(letter, coords, handType, originalConfidence) {
+            if (!coords || coords.length < 21) return originalConfidence;
+            
+            let confidenceBonus = 0;
+            
+            if (letter === 'A') {
+                // A sign: thumb should be extended outward, other fingers curled
+                const thumbTip = coords[4];
+                const thumbMCP = coords[2];
+                const indexTip = coords[8];
+                const middleTip = coords[12];
+                const ringTip = coords[16];
+                const pinkyTip = coords[20];
+                const wrist = coords[0];
+                
+                // Check if thumb is extended (far from wrist)
+                const thumbExtended = Math.abs(thumbTip.x - wrist.x) + Math.abs(thumbTip.y - wrist.y) > 0.4;
+                
+                // Check if other fingers are curled (tips close to palm)
+                const fingersCurled = (Math.abs(indexTip.y - wrist.y) < 0.3 &&
+                                    Math.abs(middleTip.y - wrist.y) < 0.3 &&
+                                    Math.abs(ringTip.y - wrist.y) < 0.3 &&
+                                    Math.abs(pinkyTip.y - wrist.y) < 0.3);
+                
+                if (thumbExtended && fingersCurled) {
+                    confidenceBonus = 0.15;
+                }
+                
+                // Hand-specific adjustment for A
+                if (handType === 'right' && thumbTip.x > wrist.x + 0.2) {
+                    confidenceBonus += 0.05; // Right hand thumb pointing right
+                } else if (handType === 'left' && thumbTip.x < wrist.x - 0.2) {
+                    confidenceBonus += 0.05; // Left hand thumb pointing left
+                }
+                
+            } else if (letter === 'S') {
+                // S sign: thumb tucked over fingers, all fingers curled
+                const thumbTip = coords[4];
+                const indexTip = coords[8];
+                const middleTip = coords[12];
+                const ringTip = coords[16];
+                const pinkyTip = coords[20];
+                const wrist = coords[0];
+                
+                // Check if all fingertips are close to wrist (curled)
+                const allFingersCurled = (Math.abs(thumbTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(indexTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(middleTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(ringTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(pinkyTip.y - wrist.y) < 0.25);
+                
+                // Check if thumb is positioned over other fingers (not extended)
+                const thumbTucked = Math.abs(thumbTip.y - indexTip.y) < 0.15;
+                
+                if (allFingersCurled && thumbTucked) {
+                    confidenceBonus = 0.20;
+                }
+            }
+            
+            return Math.min(1.0, originalConfidence + confidenceBonus);
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startCamera);
+        stopBtn.addEventListener('click', stopCamera);
+        clearBtn.addEventListener('click', clearText);
+        toggleGuideBtn.addEventListener('click', toggleGuide);
+        toggleInstructionsBtn.addEventListener('click', toggleInstructions);
+        
+        // ASL Guide Image Modal functionality
+        const letterCards = document.querySelectorAll('.letter-card');
+        letterCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const img = this.querySelector('img');
+                const letter = this.dataset.letter;
+                
+                if (img && img.src && !img.src.includes('data:image/svg+xml')) {
+                    // Add click animation
+                    this.classList.add('clicked');
+                    setTimeout(() => this.classList.remove('clicked'), 200);
+                    
+                    // Show modal
+                    modalImage.src = img.src;
+                    modalLetter.textContent = letter;
+                    imageModal.classList.add('active');
+                }
+            });
+        });
+        
+        // Close modal on background click
+        imageModal.addEventListener('click', function() {
+            imageModal.classList.remove('active');
+        });
+        
+        // Prevent modal image click from closing modal
+        modalImage.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+                imageModal.classList.remove('active');
+            }
+        });
+        
+        // Toggle ASL Guide visibility
+        function toggleGuide() {
+            sidePanel.classList.toggle('hidden');
+            const isHidden = sidePanel.classList.contains('hidden');
+            toggleGuideBtn.textContent = isHidden ? '📖 Show Guide' : '📖 Hide Guide';
+        }
+        
+        // Toggle Instructions visibility
+        function toggleInstructions() {
+            leftPanel.classList.toggle('hidden');
+            const isHidden = leftPanel.classList.contains('hidden');
+            toggleInstructionsBtn.textContent = isHidden ? '📋 Show Instructions' : '📋 Hide Instructions';
+        }
+    </script>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                    console.log('BGM: Muted');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                    console.log('BGM: Unmuted');
+                }
+            });
+        }
+        
+        // Start BGM on page load (play by default after login)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            } else {
+                bgmAudio.muted = false;
+                isMuted = false;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                }
+            }
+            
+            // Play BGM unless it was explicitly stopped (game was played)
+            if (bgmState !== 'stopped') {
+                bgmAudio.play().then(() => {
+                    console.log('BGM: Started playing successfully');
+                    sessionStorage.setItem('bgmState', 'playing');
+                }).catch(err => {
+                    console.log('BGM: Play failed, trying on user interaction:', err);
+                    document.addEventListener('click', function playOnFirstClick() {
+                        bgmAudio.play().then(() => {
+                            console.log('BGM: Started playing on click');
+                            sessionStorage.setItem('bgmState', 'playing');
+                        }).catch(err => {
+                            console.log('BGM: Still failed on click:', err);
+                        });
+                        document.removeEventListener('click', playOnFirstClick);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

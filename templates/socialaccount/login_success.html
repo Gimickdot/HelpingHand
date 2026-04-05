@@ -1,0 +1,20 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Successful</title>
+    <script>
+        // Send message to parent window that login was successful
+        if (window.opener) {
+            window.opener.postMessage('google_login_success', window.location.origin);
+        }
+        // Close this popup
+        window.close();
+    </script>
+</head>
+<body>
+    <p>Login successful! Redirecting...</p>
+</body>
+</html>

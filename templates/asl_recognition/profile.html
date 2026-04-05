@@ -1,0 +1,816 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - HelpingHand</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('{% static "images/bg.png" %}') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+        }
+        
+        .profile-container {
+            max-width: 980px;
+            width: 100%;
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+            height: calc(100vh - 8px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            border: 2px solid #8B4513;
+        }
+        
+        .profile-title {
+            font-family: 'Press Start 2P', cursive;
+            color: #FFD700;
+            font-size: 18px;
+            margin-bottom: 3px;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+        }
+        
+        .profile-subtitle {
+            color: #654321;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 2px solid #d4c4a8;
+        }
+        
+        .stat-value {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 3px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .profile-form {
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 5px;
+            border: 2px solid #d4c4a8;
+        }
+        
+        .form-title {
+            font-family: 'Press Start 2P', cursive;
+            color: #8b7355;
+            font-size: 11px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 8px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 4px;
+            font-family: 'Press Start 2P', cursive;
+            font-weight: 600;
+            color: #8b7355;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 3px solid #8b7355;
+            border-radius: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11px;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            background: #faf5e8;
+            resize: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+            transform: translateY(-1px);
+        }
+        
+        .form-control:hover {
+            border-color: #a0826d;
+            background: #fff9f0;
+        }
+        
+        textarea.form-control {
+            resize: none !important;
+            min-height: 40px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 5px;
+            align-items: start;
+        }
+        
+        .form-row .profile-form {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-row .profile-form:last-child {
+            justify-content: space-between;
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .form-actions .pixel-btn {
+            flex: 1;
+            padding: 8px 12px;
+            font-size: 9px;
+        }
+        
+        .pixel-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px 20px;
+            background: #4a90e2;
+            border: 2px solid #357abd;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        
+        .pixel-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .pixel-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 rgba(0,0,0,0.3);
+        }
+        
+        .pixel-btn.primary {
+            background: #27ae60;
+            border-color: #1a8a4b;
+        }
+        
+        .pixel-btn.secondary {
+            background: #e67e22;
+            border-color: #d35400;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+        
+        .file-input-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.1s;
+            border: 2px solid #2980b9;
+            display: inline-block;
+        }
+        
+        .file-input-label:hover {
+            background: #2980b9;
+            transform: translate(1px, 1px);
+        }
+        
+        .current-picture {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .profile-pic-preview {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #8b7355;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .profile-pic-placeholder {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            border: 3px solid #8b7355;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .recent-scores {
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 2px solid #d4c4a8;
+            margin-bottom: 2px;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .recent-scores h2 {
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
+        
+        .scores-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px;
+            border-bottom: 1px solid #eee;
+            background: #faf5e8;
+        }
+        
+        .score-item:last-child {
+            border-bottom: none;
+        }
+        
+        .score-value {
+            font-family: 'Press Start 2P', cursive;
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 12px;
+        }
+        
+        .score-mode {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 10px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .score-date {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .text-danger {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .profile-container {
+                margin: 5px;
+                padding: 15px;
+                height: calc(100vh - 10px);
+            }
+            
+            .profile-header {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .profile-title {
+                font-size: 16px;
+                margin-bottom: 5px;
+            }
+            
+            .profile-subtitle {
+                font-size: 10px;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+            
+            .stat-card {
+                padding: 10px;
+            }
+            
+            .stat-value {
+                font-size: 12px;
+            }
+            
+            .stat-label {
+                font-size: 8px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .profile-form {
+                padding: 12px;
+                margin-bottom: 8px;
+            }
+            
+            .form-title {
+                font-size: 10px;
+                margin-bottom: 8px;
+            }
+            
+            .form-label {
+                font-size: 8px;
+            }
+            
+            .form-control {
+                padding: 8px 10px;
+                font-size: 10px;
+            }
+            
+            .recent-scores {
+                padding: 10px;
+            }
+            
+            .score-item {
+                padding: 8px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .score-value {
+                font-size: 10px;
+            }
+            
+            .score-mode {
+                font-size: 8px;
+            }
+            
+            .score-date {
+                font-size: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-container {
+                margin: 2px;
+                padding: 10px;
+                height: calc(100vh - 4px);
+            }
+            
+            .profile-header {
+                padding: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .profile-title {
+                font-size: 14px;
+            }
+            
+            .profile-subtitle {
+                font-size: 9px;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+            
+            .stat-card {
+                padding: 8px;
+            }
+            
+            .stat-value {
+                font-size: 11px;
+            }
+            
+            .stat-label {
+                font-size: 7px;
+            }
+            
+            .profile-form {
+                padding: 10px;
+                margin-bottom: 6px;
+            }
+            
+            .form-title {
+                font-size: 9px;
+                margin-bottom: 6px;
+            }
+            
+            .form-label {
+                font-size: 7px;
+                margin-bottom: 3px;
+            }
+            
+            .form-control {
+                padding: 6px 8px;
+                font-size: 9px;
+            }
+            
+            .form-actions .pixel-btn {
+                padding: 6px 10px;
+                font-size: 8px;
+            }
+            
+            .recent-scores {
+                padding: 8px;
+            }
+            
+            .score-item {
+                padding: 6px;
+            }
+            
+            .score-value {
+                font-size: 9px;
+            }
+            
+            .score-mode {
+                font-size: 7px;
+            }
+            
+            .score-date {
+                font-size: 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div style="position: fixed; top: 10px; left: 10px; z-index: 9999;">
+        <a href="{% url 'home' %}" class="pixel-btn">← Home</a>
+    </div>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static "audio/buttons.mp3" %}" type="audio/mpeg">
+    </audio>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h1 class="profile-title">My Profile</h1>
+        <p class="profile-subtitle">Manage your account settings and track your progress</p>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div id="message-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" data-message-id="{{ forloop.counter }}" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; border: 3px solid #8b7355; font-family: 'Press Start 2P', cursive; font-size: 10px; box-shadow: 0 4px 0 rgba(0,0,0,0.2); background: #f5e6c8;">
+                    {% if message.tags == 'success' %}
+                        <div style="color: #27ae60; display: flex; align-items: center; margin-bottom: 5px;">✅ {{ message }}</div>
+                    {% elif message.tags == 'error' %}
+                        <div style="color: #dc3545; display: flex; align-items: center; margin-bottom: 5px;">❌ {{ message }}</div>
+                    {% else %}
+                        <div style="color: #17a2b8; display: flex; align-items: center; margin-bottom: 5px;">ℹ️ {{ message }}</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-value">{{ best_score }}</div>
+            <div class="stat-label">Best Score</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ recent_scores|length }}</div>
+            <div class="stat-label">Games Played</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ user.date_joined|date:"M d, Y" }}</div>
+            <div class="stat-label">Member Since</div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="profile-form">
+            <h2 class="form-title">Edit Profile</h2>
+            <form method="post" enctype="multipart/form-data" id="profileForm">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label class="form-label">Profile Picture</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+                        <label for="profile_picture" class="file-input-label">Choose Picture</label>
+                    </div>
+                    <div id="picturePreview" class="current-picture">
+                        {% if profile.profile_picture %}
+                            <img src="{{ profile.get_profile_picture_url }}" alt="Current profile picture" class="profile-pic-preview" id="currentImage">
+                        {% else %}
+                            <div class="profile-pic-placeholder" id="currentImage">{{ user.username|first|upper }}</div>
+                        {% endif %}
+                        <div>
+                            <span>Current picture</span>
+                            {% if profile.profile_picture %}
+                                <a href="{% url 'delete_profile_picture' %}" class="pixel-btn" style="font-size: 8px; padding: 4px 8px; margin-left: 5px;" onclick="return confirm('Are you sure you want to remove your profile picture?')">Remove</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="id_username">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="text-danger">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="id_bio">Bio</label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}
+                        <div class="text-danger">{{ form.bio.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="pixel-btn primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="profile-form">
+            <h2 class="form-title">Account Settings</h2>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <a href="{% url 'change_password' %}" class="pixel-btn secondary" style="width: 100%; padding: 8px;">Change Password</a>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Account Actions</label>
+                <a href="{% url 'dashboard' %}" class="pixel-btn" style="width: 100%; padding: 8px; background: #667eea; border-color: #4a5bb8;">Dashboard</a>
+            </div>
+            <div style="flex: 1;"></div>
+            <div class="form-group">
+                <label class="form-label">Quick Links</label>
+                <a href="{% url 'logout' %}" class="pixel-btn" style="width: 100%; padding: 8px; background: #e74c3c; border-color: #c0392b;">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    {% if recent_scores %}
+    <div class="recent-scores">
+        <h2 class="form-title">Recent Scores</h2>
+        <div class="scores-list">
+            {% for score in recent_scores %}
+            <div class="score-item">
+                <div>
+                    <span class="score-value">{{ score.score }}</span>
+                    <span class="score-mode">{{ score.get_game_mode_display }}</span>
+                </div>
+                <span class="score-date">{{ score.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="recent-scores">
+        <h2 class="form-title">Recent Scores</h2>
+        <div style="text-align: center; padding: 20px; color: #8b7355; font-family: 'Press Start 2P', cursive; font-size: 10px;">
+            🎮 No scores yet!<br>
+            Start playing to see your scores here!
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Audio elements
+    const bgmAudio = document.getElementById('bgmAudio');
+    const buttonSound = document.getElementById('buttonSound');
+    
+    // Prevent duplicate messages
+    document.addEventListener('DOMContentLoaded', function() {
+        const messageContainer = document.getElementById('message-container');
+        if (messageContainer) {
+            const messages = messageContainer.querySelectorAll('.alert');
+            const seenMessages = new Set();
+            
+            messages.forEach(function(message) {
+                const messageText = message.textContent.trim();
+                if (seenMessages.has(messageText)) {
+                    // Remove duplicate message
+                    message.remove();
+                } else {
+                    seenMessages.add(messageText);
+                    // Auto-hide after 5 seconds
+                    setTimeout(function() {
+                        message.style.transition = 'opacity 0.5s ease';
+                        message.style.opacity = '0';
+                        setTimeout(function() {
+                            message.style.display = 'none';
+                        }, 500);
+                    }, 5000);
+                }
+            });
+        }
+    });
+    
+    // Profile picture preview functionality
+    document.getElementById('profile_picture').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const previewContainer = document.getElementById('picturePreview');
+        const currentImage = document.getElementById('currentImage');
+        
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Create new image element
+                const newImage = document.createElement('img');
+                newImage.src = e.target.result;
+                newImage.alt = 'Profile picture preview';
+                newImage.className = 'profile-pic-preview';
+                newImage.id = 'currentImage';
+                
+                // Replace current image/placeholder
+                currentImage.parentNode.replaceChild(newImage, currentImage);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Mute/Unmute button functionality
+    const muteBGM = document.getElementById('muteBGM');
+    let isMuted = false;
+    
+    if (muteBGM) {
+        muteBGM.addEventListener('click', function() {
+            isMuted = !isMuted;
+            if (isMuted) {
+                bgmAudio.muted = true;
+                muteBGM.textContent = '🔇 BGM OFF';
+                muteBGM.style.background = '#e74c3c';
+                sessionStorage.setItem('bgmMuted', 'true');
+                console.log('BGM: Muted');
+            } else {
+                bgmAudio.muted = false;
+                muteBGM.textContent = '🔊 BGM ON';
+                muteBGM.style.background = '#4a90e2';
+                sessionStorage.setItem('bgmMuted', 'false');
+                console.log('BGM: Unmuted');
+            }
+        });
+    }
+    
+    // Start BGM on page load
+    window.addEventListener('load', function() {
+        const bgmState = sessionStorage.getItem('bgmState');
+        const bgmMuted = sessionStorage.getItem('bgmMuted');
+        
+        bgmAudio.volume = 0.3;
+        bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+        
+        // Set mute state from sessionStorage
+        if (bgmMuted === 'true') {
+            bgmAudio.muted = true;
+            isMuted = true;
+            if (muteBGM) {
+                muteBGM.textContent = '🔇 BGM OFF';
+                muteBGM.style.background = '#e74c3c';
+            }
+        } else {
+            bgmAudio.muted = false;
+            isMuted = false;
+            if (muteBGM) {
+                muteBGM.textContent = '🔊 BGM ON';
+                muteBGM.style.background = '#4a90e2';
+            }
+        }
+        
+        // Play BGM unless it was explicitly stopped
+        if (bgmState !== 'stopped') {
+            bgmAudio.play().then(() => {
+                console.log('BGM: Started playing successfully');
+                sessionStorage.setItem('bgmState', 'playing');
+            }).catch(err => {
+                console.log('BGM: Play failed, trying on user interaction:', err);
+                document.addEventListener('click', function playOnFirstClick() {
+                    bgmAudio.play().then(() => {
+                        console.log('BGM: Started playing on click');
+                        sessionStorage.setItem('bgmState', 'playing');
+                    }).catch(err => {
+                        console.log('BGM: Still failed on click:', err);
+                    });
+                    document.removeEventListener('click', playOnFirstClick);
+                }, { once: true });
+            });
+        }
+    });
+    
+    // Add button click sounds
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('a, button');
+        
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                buttonSound.currentTime = 0;
+                buttonSound.volume = 0.5;
+                buttonSound.play().catch(err => console.log('Button sound failed:', err));
+            });
+        });
+    });
+</script>
+</body>
+</html>

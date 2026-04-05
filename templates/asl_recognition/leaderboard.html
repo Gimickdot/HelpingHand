@@ -1,0 +1,607 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - ASL Game</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/static/images/bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .trophy-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+        }
+        
+        .title-box {
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #FFD700;
+            font-size: 32px;
+            margin: 0;
+            text-align: center;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .subtitle {
+            color: #FFFFFF;
+            font-size: 32px;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .pixel-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px 20px;
+            background: #4a90e2;
+            border: 2px solid #357abd;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        
+        .pixel-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .pixel-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 rgba(0,0,0,0.3);
+        }
+        
+        .container {
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .leaderboard-table th {
+            background: #8b7355;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px 8px;
+            text-align: center;
+            border: 2px solid #5a4a3a;
+            text-transform: uppercase;
+        }
+        
+        .leaderboard-table th:first-child {
+            border-radius: 4px 0 0 0;
+        }
+        
+        .leaderboard-table th:last-child {
+            border-radius: 0 4px 0 0;
+        }
+        
+        .leaderboard-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border: 2px solid #d4c4a8;
+            background: #faf5e8;
+        }
+        
+        .leaderboard-table tr:nth-child(even) td {
+            background: #f0e6d0;
+        }
+        
+        .leaderboard-table tr:last-child td:first-child {
+            border-radius: 0 0 0 4px;
+        }
+        
+        .leaderboard-table tr:last-child td:last-child {
+            border-radius: 0 0 4px 0;
+        }
+        
+        .rank {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .rank-1 { color: #b8860b; }
+        .rank-2 { color: #808080; }
+        .rank-3 { color: #cd7f32; }
+        
+        .medal {
+            font-size: 20px;
+        }
+        
+        .username {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #8b7355;
+        }
+        
+        .profile-pic-placeholder {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border: 2px solid #8b7355;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        
+        .profile-pic,
+        .profile-pic-placeholder:hover {
+            transform: scale(1.1);
+        }
+        
+        .score {
+            font-weight: bold;
+            color: #2e8b57;
+        }
+        
+        .date {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .no-scores {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .no-scores p {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .play-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 15px 30px;
+            background: #27ae60;
+            border: 2px solid #1a8a4b;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .play-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        
+        .mode-tab {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px 20px;
+            border: 3px solid;
+            text-decoration: none;
+            color: white;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .mode-tab:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .mode-tab.sprint {
+            background: #fd7e14;
+            border-color: #d35400;
+        }
+        
+        .mode-tab.sprint.active {
+            background: #e67e22;
+            border-color: #a04000;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .mode-tab.standard {
+            background: #6f42c1;
+            border-color: #5a32a3;
+        }
+        
+        .mode-tab.standard.active {
+            background: #5a32a3;
+            border-color: #4a2283;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .mode-badge {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        
+        .mode-badge.sprint {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .mode-badge.standard {
+            background: #6f42c1;
+            color: white;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .title-box {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .trophy-icon {
+                font-size: 36px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .pixel-btn {
+                font-size: 8px;
+                padding: 10px 16px;
+                margin-bottom: 15px;
+            }
+            
+            .mode-tabs {
+                flex-direction: column;
+                gap: 8px;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .mode-tab {
+                font-size: 9px;
+                padding: 10px 15px;
+                text-align: center;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .leaderboard-table th {
+                font-size: 8px;
+                padding: 8px 4px;
+            }
+            
+            .leaderboard-table td {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+            
+            .leaderboard-table th:nth-child(5),
+            .leaderboard-table td:nth-child(5) {
+                display: none;
+            }
+            
+            .rank {
+                font-size: 12px;
+            }
+            
+            .medal {
+                font-size: 16px;
+            }
+            
+            .profile-pic,
+            .profile-pic-placeholder {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .profile-pic-placeholder {
+                font-size: 10px;
+            }
+            
+            .username {
+                gap: 6px;
+            }
+            
+            .mode-badge {
+                font-size: 7px;
+                padding: 3px 6px;
+            }
+            
+            .score {
+                font-size: 12px;
+            }
+            
+            /* Fixed Home button for mobile */
+            a[href="{% url 'home' %}"].pixel-btn {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 16px;
+            }
+            
+            .subtitle {
+                font-size: 12px;
+            }
+            
+            .leaderboard-table th {
+                font-size: 7px;
+                padding: 6px 3px;
+            }
+            
+            .leaderboard-table td {
+                padding: 6px 3px;
+                font-size: 11px;
+            }
+            
+            .medal {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static "audio/buttons.mp3" %}" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    
+    <!-- Home button -->
+    {% if user.is_authenticated %}
+    <a href="{% url 'home' %}" class="pixel-btn" style="position: fixed; top: 10px; left: 10px; z-index: 9999;">← Home</a>
+    {% endif %}
+    <div class="title-box">
+        <div class="trophy-icon">🏆</div>
+        <h1>Leaderboard</h1>
+        <p class="subtitle">Top 10 ASL Spellers</p>
+    </div>
+    
+    {% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}" class="pixel-btn">← Dashboard</a>
+    {% else %}
+    <a href="{% url 'index' %}" class="pixel-btn">← Home</a>
+    {% endif %}
+    
+    <!-- Mode Tabs -->
+    <div class="mode-tabs">
+        <a href="{% url 'leaderboard' %}?mode=sprint" class="mode-tab sprint {% if current_mode == 'sprint' %}active{% endif %}">⚡ Short Word Sprint</a>
+        <a href="{% url 'leaderboard' %}?mode=standard" class="mode-tab standard {% if current_mode == 'standard' %}active{% endif %}">🎯 Standard Challenge</a>
+    </div>
+        
+    <div class="container">
+        {% if top_scores %}
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th style="width: 70px;">Rank</th>
+                    <th>Username</th>
+                    <th style="width: 80px;">Mode</th>
+                    <th style="width: 100px;">Score</th>
+                    <th style="width: 120px;">Date Played</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for score in top_scores %}
+                <tr>
+                    <td class="rank rank-{{ forloop.counter }}">
+                        {% if forloop.counter == 1 %}<span class="medal">🥇</span>{% elif forloop.counter == 2 %}<span class="medal">🥈</span>{% elif forloop.counter == 3 %}<span class="medal">🥉</span>{% else %}#{{ forloop.counter }}{% endif %}
+                    </td>
+                    <td class="username">
+                        {% if score.user.profile.profile_picture %}
+                            <a href="{% url 'view_user_profile' score.user.username %}" style="text-decoration: none;">
+                                <img src="{{ score.user.profile.get_profile_picture_url }}" alt="{{ score.user.username }}" class="profile-pic">
+                            </a>
+                        {% else %}
+                            <a href="{% url 'view_user_profile' score.user.username %}" style="text-decoration: none;">
+                                <div class="profile-pic-placeholder">{{ score.user.username|first|upper }}</div>
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'view_user_profile' score.user.username %}" style="color: #333; text-decoration: none;">{{ score.user.username }}</a>
+                    </td>
+                    <td>
+                        {% if score.game_mode == 'sprint' %}
+                        <span class="mode-badge sprint">⚡ SPRINT</span>
+                        {% else %}
+                        <span class="mode-badge standard">🎯 STANDARD</span>
+                        {% endif %}
+                    </td>
+                    <td class="score">{{ score.score }} pts</td>
+                    <td class="date">{{ score.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="no-scores">
+            <p>No scores yet.<br>Be the first to play!</p>
+            {% if user.is_authenticated %}
+            <a href="{% url 'game' %}" class="play-btn">Play Now</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                    console.log('BGM: Muted');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                    console.log('BGM: Unmuted');
+                }
+            });
+        }
+        
+        // Start BGM on page load (play by default after login)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            } else {
+                bgmAudio.muted = false;
+                isMuted = false;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                }
+            }
+            
+            // Play BGM unless it was explicitly stopped (game was played)
+            if (bgmState !== 'stopped') {
+                bgmAudio.play().then(() => {
+                    console.log('BGM: Started playing successfully');
+                    sessionStorage.setItem('bgmState', 'playing');
+                }).catch(err => {
+                    console.log('BGM: Play failed, trying on user interaction:', err);
+                    document.addEventListener('click', function playOnFirstClick() {
+                        bgmAudio.play().then(() => {
+                            console.log('BGM: Started playing on click');
+                            sessionStorage.setItem('bgmState', 'playing');
+                        }).catch(err => {
+                            console.log('BGM: Still failed on click:', err);
+                        });
+                        document.removeEventListener('click', playOnFirstClick);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

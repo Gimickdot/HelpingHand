@@ -1,0 +1,396 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Learning Hub</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: url('{% static "images/bg.png" %}') center center/cover no-repeat fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            background: #E6D1B3;
+            border-radius: 10px;
+            border: 3px solid #8B4513;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            color: #333;
+        }
+        
+        .user-info {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            border: 2px solid #8B4513;
+        }
+        
+        .welcome-text {
+            font-size: 1.5em;
+            color: #654321;
+            margin-bottom: 10px;
+        }
+        
+        .username {
+            font-size: 1.2em;
+            color: #FFD700;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: #FFD700;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .menu-grid .menu-item.profile {
+            grid-column: 1 / -1; /* Make profile span full width */
+            max-width: 300px; /* Limit width */
+            margin: 0 auto; /* Center it */
+            justify-self: center; /* Center in grid */
+        }
+        
+        .menu-item {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            display: inline-block;
+            padding: 15px 35px;
+            text-decoration: none;
+            color: white;
+            border: 3px solid;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-height: 120px;
+            justify-content: center;
+        }
+        
+        .menu-item:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .menu-item.training {
+            background: #f1c40f;
+            border: 3px solid #d4ac0d;
+            color: #333;
+        }
+        
+        .menu-item.leaderboard {
+            background: #9b59b6;
+            border: 3px solid #8e44ad;
+        }
+        
+        .menu-item.game {
+            background: #27ae60;
+            border: 3px solid #1a8a4b;
+        }
+        
+        .menu-item.learn {
+            background: #3498db;
+            border: 3px solid #2980b9;
+        }
+        
+        .menu-item.profile {
+            background: #e67e22;
+            border: 3px solid #d35400;
+        }
+        
+        .menu-icon {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .menu-title {
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.3;
+        }
+        
+        .logout-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #8B4513;
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            padding: 10px 16px;
+            text-decoration: none;
+            border-radius: 0px;
+            font-size: 8px;
+            font-weight: bold;
+            border: 2px solid #c0392b;
+            box-shadow: 3px 3px 0px #c0392b;
+            transition: all 0.1s ease;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 4px 4px 0px #8B0000;
+            background: #dc3545;
+        }
+        
+        .logout-btn:active {
+            transform: translateY(1px);
+            box-shadow: 1px 1px 0px #8B0000;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 25px;
+            }
+            
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .menu-item {
+                padding: 20px 15px;
+                min-height: 120px;
+                font-size: 10px;
+            }
+            
+            .menu-icon {
+                font-size: 2em;
+                margin-bottom: 10px;
+            }
+            
+            .menu-title {
+                font-size: 0.9em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .container {
+                margin: 5px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 20px;
+                line-height: 1.3;
+            }
+            
+            .menu-grid {
+                gap: 12px;
+            }
+            
+            .menu-item {
+                padding: 15px 10px;
+                min-height: 100px;
+                font-size: 9px;
+            }
+            
+            .menu-icon {
+                font-size: 1.8em;
+                margin-bottom: 8px;
+            }
+            
+            .menu-title {
+                font-size: 0.8em;
+                line-height: 1.2;
+            }
+            
+            .logout-btn {
+                padding: 10px 20px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static "audio/buttons.mp3" %}" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    
+    <div class="container">
+        <h1>ASL Learning Hub</h1>
+        
+        <div class="menu-grid">
+            <a href="{% url 'dashboard' %}" class="menu-item game">
+                <div class="menu-icon">🎮</div>
+                <div class="menu-title">PLAY GAME</div>
+            </a>
+            
+            <a href="{% url 'leaderboard' %}" class="menu-item leaderboard">
+                <div class="menu-icon">🏆</div>
+                <div class="menu-title">LEADERBOARD</div>
+            </a>
+            
+            <a href="{% url 'webcam' %}" class="menu-item training">
+                <div class="menu-icon">📷</div>
+                <div class="menu-title">TRAINING MODE</div>
+            </a>
+            
+            <a href="{% url 'learn' %}" class="menu-item learn">
+                <div class="menu-icon">📚</div>
+                <div class="menu-title">LEARN</div>
+            </a>
+            
+            <a href="{% url 'profile' %}" class="menu-item profile">
+                <div class="menu-icon">👤</div>
+                <div class="menu-title">MY PROFILE</div>
+            </a>
+        </div>
+        
+        <div class="logout-section">
+            <a href="{% url 'logout' %}" class="logout-btn">LOGOUT</a>
+        </div>
+    </div>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                    console.log('BGM: Muted');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                    console.log('BGM: Unmuted');
+                }
+            });
+        }
+        
+        // Start BGM on page load (play by default after login)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            } else {
+                bgmAudio.muted = false;
+                isMuted = false;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                }
+            }
+            
+            // Play BGM unless it was explicitly stopped (game was played)
+            if (bgmState !== 'stopped') {
+                bgmAudio.play().then(() => {
+                    console.log('BGM: Started playing successfully');
+                    sessionStorage.setItem('bgmState', 'playing');
+                }).catch(err => {
+                    console.log('BGM: Play failed, trying on user interaction:', err);
+                    document.addEventListener('click', function playOnFirstClick() {
+                        bgmAudio.play().then(() => {
+                            console.log('BGM: Started playing on click');
+                            sessionStorage.setItem('bgmState', 'playing');
+                        }).catch(err => {
+                            console.log('BGM: Still failed on click:', err);
+                        });
+                        document.removeEventListener('click', playOnFirstClick);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

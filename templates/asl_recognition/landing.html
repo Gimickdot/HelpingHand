@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Sign Language Recognition</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            border: 3px solid #fff;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .hand-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: wave 2s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #ffd700;
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.7);
+            line-height: 1.2;
+        }
+        
+        .intro-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: #fff;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: 3px solid #fff;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 20px 10px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(45deg, #ff8e53, #ff6b6b);
+        }
+        
+        .cta-button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { width: 3px; height: 3px; top: 20%; left: 80%; animation-delay: 1s; }
+        .star:nth-child(3) { width: 2px; height: 2px; top: 30%; left: 60%; animation-delay: 2s; }
+        .star:nth-child(4) { width: 1px; height: 1px; top: 40%; left: 40%; animation-delay: 0.5s; }
+        .star:nth-child(5) { width: 3px; height: 3px; top: 60%; left: 70%; animation-delay: 1.5s; }
+        .star:nth-child(6) { width: 2px; height: 2px; top: 80%; left: 30%; animation-delay: 2.5s; }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .intro-text {
+                font-size: 1em;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button {
+                font-size: 1em;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    
+    <div class="container">
+        <div class="hand-icon">🤟</div>
+        <h1>Welcome to HelpingHand!</h1>
+        <p class="intro-text">
+            Learn ASL like never before. Practice hand signs and earn points on our gamified ASL learning platform. Your fingers become controllers. Ready to sign and score? Get started now!
+        </p>
+        
+        <div class="buttons-container">
+            <a href="{% url 'login' %}" class="cta-button">Login</a>
+            <a href="{% url 'register' %}" class="cta-button">Register</a>
+        </div>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static 'audio/buttons.mp3' %}" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                    console.log('BGM: Muted');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                    console.log('BGM: Unmuted');
+                }
+            });
+        }
+        
+        // Start BGM on page load (play by default)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            } else {
+                bgmAudio.muted = false;
+                isMuted = false;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                }
+            }
+            
+            // Play BGM unless it was explicitly stopped (game was played)
+            if (bgmState !== 'stopped') {
+                bgmAudio.play().then(() => {
+                    console.log('BGM: Started playing successfully');
+                    sessionStorage.setItem('bgmState', 'playing');
+                }).catch(err => {
+                    console.log('BGM: Play failed, trying on user interaction:', err);
+                    document.addEventListener('click', function playOnFirstClick() {
+                        bgmAudio.play().then(() => {
+                            console.log('BGM: Started playing on click');
+                            sessionStorage.setItem('bgmState', 'playing');
+                        }).catch(err => {
+                            console.log('BGM: Still failed on click:', err);
+                        });
+                        document.removeEventListener('click', playOnFirstClick);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+    </script>
+</body>
+</html>

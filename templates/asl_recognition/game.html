@@ -1,0 +1,2278 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play Game - ASL Challenge</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/static/images/bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            overflow: auto;
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+        }
+        
+        .title-box {
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #FFD700;
+            font-size: 24px;
+            margin: 0;
+            text-align: center;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .game-info {
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            flex: 1;
+            align-items: flex-start;
+        }
+        
+        .left-panel {
+            width: 240px;
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            padding: 15px;
+            height: 100%;
+            overflow: hidden;
+            position: sticky;
+            top: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .left-panel.hidden {
+            display: none;
+        }
+        
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .side-panel {
+            width: 280px;
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            padding: 15px;
+            height: auto;
+            position: sticky;
+            top: 10px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .side-panel.hidden {
+            display: none;
+        }
+        
+        .instructions {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+        }
+        
+        .instructions h4 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            color: #8b7355;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            height: calc(100% - 40px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .instructions li {
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            margin-bottom: 10px;
+            padding: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .asl-guide {
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            margin: 0;
+            border: none;
+        }
+        
+        .asl-guide h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+            color: #8b7355;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .alphabet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            padding: 0;
+        }
+        
+        .letter-card {
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            padding: 4px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .letter-card:hover {
+            transform: scale(1.05);
+            border-color: #8b7355;
+            z-index: 10;
+        }
+        
+        .letter-card img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            margin-bottom: 1px;
+            transition: all 0.3s;
+        }
+        
+        .letter-card span {
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        .image-modal.active {
+            display: flex;
+        }
+        
+        .modal-image {
+            max-width: 90%;
+            max-height: 90%;
+            border: 4px solid #f5e6c8;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            cursor: default;
+        }
+        
+        .modal-letter {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .timer-box {
+            background: #dc3545;
+            border: 2px solid #a02834;
+            color: white;
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+        }
+        
+        .word-timer-box {
+            background: #fd7e14;
+            border: 2px solid #d35400;
+            color: white;
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            animation: pulse 1s infinite;
+        }
+        
+        .word-timer-box.warning {
+            background: #dc3545;
+            border-color: #a02834;
+            animation: pulse 0.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .game-mode-display {
+            background: #6f42c1;
+            border: 2px solid #5a32a3;
+            color: white;
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+        }
+        
+        .streak-box {
+            background: #ffc107;
+            border: 2px solid #d4ac0d;
+            color: #333;
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .streak-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .streak-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #6c757d;
+            transition: background 0.3s;
+        }
+        
+        .streak-dot.active {
+            background: #dc3545;
+            box-shadow: 0 0 5px #dc3545;
+        }
+        
+        .bonus-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 4px solid #d4ac0d;
+            color: #333;
+            padding: 30px 50px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 18px;
+            text-align: center;
+            z-index: 2000;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .bonus-popup.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .bonus-popup .bonus-text {
+            font-size: 24px;
+            color: #dc3545;
+            margin-top: 10px;
+        }
+        
+        .score-box {
+            background: #28a745;
+            border: 2px solid #1a5233;
+            color: white;
+            padding: 8px 16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+        }
+        
+        .word-box {
+            background: #8b7355;
+            border: 3px solid #5a4a3a;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .word-box h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        
+        .target-word {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+        }
+        
+        .spelled-word {
+            font-size: 32px;
+            margin-top: 15px;
+            min-height: 50px;
+            letter-spacing: 3px;
+            color: #ffd700;
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 10px;
+            background: #000;
+            border: 3px solid #333;
+            overflow: hidden;
+            flex: 1;
+            min-height: 0;
+            aspect-ratio: 4/3;
+        }
+        
+        #video {
+            width: 100%;
+            height: 100%;
+            background: #333;
+            transform: scaleX(-1);
+        }
+        
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) scaleX(-1);
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .controls button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 10px 14px;
+            border: 2px solid;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .controls button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        #startBtn {
+            background: #27ae60;
+            border-color: #1a8a4b;
+            color: white;
+        }
+        
+        #stopBtn {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+        
+        #clearBtn {
+            background: #f1c40f;
+            border-color: #d4ac0d;
+            color: #333;
+        }
+        
+        #backBtn {
+            background: #6c757d;
+            border-color: #4a555d;
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            background: #f6f7fb;
+        }
+
+        .letter-card span {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #2c2f33;
+        }
+
+        .letter-card.active {
+            border-color: #667eea;
+            box-shadow: 0 10px 22px rgba(102, 126, 234, 0.25);
+            background: rgba(102, 126, 234, 0.06);
+        }
+        
+        .status {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 0.9rem;
+        }
+        
+        .prediction-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 8px 0;
+        }
+        
+        .prediction-box h3 {
+            font-size: 28px;
+            margin: 5px 0;
+        }
+        
+        .hand-detected {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .hand-not-detected {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .game-over {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .game-over-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .game-over-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .final-score {
+            font-size: 48px;
+            color: #28a745;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .stop-confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1500;
+        }
+        
+        .stop-confirm-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            border: 4px solid #e74c3c;
+        }
+        
+        .stop-confirm-content h2 {
+            color: #e74c3c;
+            margin-bottom: 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 18px;
+        }
+        
+        .stop-confirm-content p {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .stop-confirm-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        
+        .stop-confirm-buttons button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 15px 25px;
+            border: 3px solid;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .stop-confirm-buttons button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .confirm-btn {
+            background: #e74c3c;
+            border-color: #c0392b;
+            color: white;
+        }
+        
+        .cancel-btn {
+            background: #27ae60;
+            border-color: #1a8a4b;
+            color: white;
+        }
+        
+        .nav-links {
+            margin-bottom: 20px;
+        }
+        
+        .nav-links a {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 10px 16px;
+            background: #4a90e2;
+            border: 2px solid #357abd;
+            color: white;
+            text-decoration: none;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .nav-links a:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .pixel-btn {
+            text-decoration: none;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .pixel-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+                overflow-x: hidden;
+            }
+            
+            .title-box {
+                padding: 15px;
+                margin-bottom: 15px;
+                position: relative;
+                z-index: 10;
+            }
+            
+            .game-icon {
+                font-size: 36px;
+                margin-bottom: 8px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            .game-info {
+                font-size: 12px;
+            }
+            
+            .container {
+                flex-direction: column;
+                gap: 15px;
+                overflow-y: auto;
+                position: relative;
+            }
+            
+            .side-panel {
+                width: 100%;
+                position: relative;
+                order: 2;
+                max-height: none;
+                overflow-y: visible;
+                z-index: 1;
+                background: #f5e6c8;
+                border: 3px solid #8b7355;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .side-panel.hidden {
+                display: none;
+            }
+            
+            .left-panel {
+                order: 1;
+                width: 100%;
+                position: relative;
+                max-height: none;
+                overflow-y: visible;
+                z-index: 1;
+                background: #f5e6c8;
+                border: 3px solid #8b7355;
+                border-radius: 8px;
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .main-content {
+                order: 3;
+                width: 100%;
+                position: relative;
+                z-index: 1;
+            }
+            
+            .asl-guide h3 {
+                font-size: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .alphabet-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 4px;
+            }
+            
+            .letter-card {
+                padding: 2px;
+            }
+            
+            .letter-card img {
+                width: 25px;
+                height: 25px;
+            }
+            
+            .letter-card .letter-label {
+                font-size: 8px;
+            }
+            
+            .instructions {
+                padding: 10px;
+            }
+            
+            .instructions h4 {
+                font-size: 10px;
+                margin-bottom: 8px;
+            }
+            
+            .instructions ul {
+                font-size: 9px;
+                line-height: 1.3;
+            }
+            
+            .game-header {
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            
+            .game-mode-display {
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+            
+            .timer-box, .word-timer-box, .streak-box {
+                font-size: 9px;
+                padding: 4px 8px;
+            }
+            
+            .video-container {
+                height: 300px;
+            }
+            
+            .game-controls {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .pixel-btn {
+                padding: 8px 12px;
+                font-size: 9px;
+            }
+            
+            .prediction-box {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 2px;
+            }
+            
+            .title-box {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .game-icon {
+                font-size: 28px;
+                margin-bottom: 5px;
+            }
+            
+            h1 {
+                font-size: 14px;
+            }
+            
+            .game-info {
+                font-size: 10px;
+            }
+            
+            .side-panel {
+                max-height: 150px;
+            }
+            
+            .asl-guide h3 {
+                font-size: 7px;
+                margin-bottom: 6px;
+            }
+            
+            .alphabet-grid {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 2px;
+            }
+            
+            .letter-card {
+                padding: 1px;
+            }
+            
+            .letter-card img {
+                width: 20px;
+                height: 20px;
+            }
+            
+            .letter-card .letter-label {
+                font-size: 6px;
+            }
+            
+            .instructions {
+                padding: 8px;
+            }
+            
+            .instructions h4 {
+                font-size: 8px;
+                margin-bottom: 6px;
+            }
+            
+            .instructions ul {
+                font-size: 7px;
+                line-height: 1.2;
+            }
+            
+            .game-mode-display {
+                font-size: 8px;
+                padding: 4px 6px;
+            }
+            
+            .timer-box, .word-timer-box, .streak-box {
+                font-size: 7px;
+                padding: 3px 6px;
+            }
+            
+            .video-container {
+                height: 250px;
+            }
+            
+            .pixel-btn {
+                padding: 6px 8px;
+                font-size: 7px;
+            }
+            
+            .prediction-box {
+                padding: 6px;
+                font-size: 10px;
+            }
+            
+            .spelled-word {
+                font-size: 14px;
+            }
+            
+            .current-letter {
+                width: 25px;
+                height: 25px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Game Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static "audio/buttons.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="startGameSound" preload="auto">
+        <source src="{% static "audio/startgame.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="timerSound" preload="auto">
+        <source src="{% static "audio/timer.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="gameOverSound" preload="auto">
+        <source src="{% static "audio/gameover.mp3" %}" type="audio/mpeg">
+    </audio>
+    <div class="title-box">
+        <div class="game-icon">🎮</div>
+        <h1>ASL Spelling Challenge</h1>
+        <p class="game-info">Spell the word using ASL gestures!</p>
+    </div>
+    
+    <div class="container">
+        <div class="left-panel" id="leftPanel">
+            <div class="instructions">
+                <h4>GAME INSTRUCTIONS</h4>
+                <ul>
+                    <li>Click "Start Game" to begin the challenge</li>
+                    <li>Show ASL letters clearly in front of camera</li>
+                    <li>Spell the target word letter by letter</li>
+                    <li>Hold each sign steady for 1 second to register</li>
+                    <li>Complete as many words as possible before time runs out</li>
+                    <li>Use "Clear" button to reset current word progress</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="nav-links">
+                <a href="{% url 'dashboard' %}">← DASHBOARD</a>
+            </div>
+            
+            <div class="game-header">
+                <div class="game-mode-display" id="gameModeDisplay">-</div>
+                <div class="timer-box">TIME: <span id="timer">05:00</span></div>
+                <div class="word-timer-box" id="wordTimerBox">WORD: <span id="wordTimer">-</span>s</div>
+                <div class="streak-box">
+                    STREAK
+                    <div class="streak-dots" id="streakDots">
+                        <div class="streak-dot"></div>
+                        <div class="streak-dot"></div>
+                        <div class="streak-dot"></div>
+                        <div class="streak-dot"></div>
+                        <div class="streak-dot"></div>
+                    </div>
+                </div>
+                <div class="score-box">SCORE: <span id="scoreDisplay">0</span></div>
+            </div>
+            
+            <div class="word-box">
+                <h2>Target Word</h2>
+                <div class="target-word" id="targetWord">-</div>
+                <div class="spelled-word" id="spelledWord"></div>
+            </div>
+            
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+            
+            <div class="controls">
+                <button id="startBtn">▶ Start Game</button>
+                <button id="stopBtn" disabled>⏹️ Stop</button>
+                <button id="clearBtn">🗑️ Clear</button>
+                <button id="toggleGuideBtn">📖 Toggle Guide</button>
+                <button id="toggleInstructionsBtn">📋 Toggle Instructions</button>
+            </div>
+            
+            <div class="status" id="status">
+                Click "Start Game" to begin!
+            </div>
+            
+            <div class="prediction-box" id="predictionBox" style="display: none;">
+                <div>Detected Letter</div>
+                <h3 id="prediction">-</h3>
+                <div id="confidence"></div>
+            </div>
+        </div>
+        
+        <!-- ASL Guide Panel -->
+        <div class="side-panel" id="sidePanel">
+            <div class="asl-guide">
+                <h3>📖 ASL Alphabet Guide</h3>
+                <div class="alphabet-grid">
+                    <div class="letter-card" data-letter="A">
+                        <img src="{{ DATASET_URL }}A/A1780.jpg" alt="A" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkE8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>A</span>
+                    </div>
+                    <div class="letter-card" data-letter="B">
+                        <img src="{{ DATASET_URL }}B/B1973.jpg" alt="B" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkI8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>B</span>
+                    </div>
+                    <div class="letter-card" data-letter="C">
+                        <img src="{{ DATASET_URL }}C/C98.jpg" alt="C" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkM8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>C</span>
+                    </div>
+                    <div class="letter-card" data-letter="D">
+                        <img src="{{ DATASET_URL }}D/D2242.jpg" alt="D" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkQ8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>D</span>
+                    </div>
+                    <div class="letter-card" data-letter="E">
+                        <img src="{{ DATASET_URL }}E/E1089.jpg" alt="E" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkU8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>E</span>
+                    </div>
+                    <div class="letter-card" data-letter="F">
+                        <img src="{{ DATASET_URL }}F/F1261.jpg" alt="F" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkY8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>F</span>
+                    </div>
+                    <div class="letter-card" data-letter="G">
+                        <img src="{{ DATASET_URL }}G/G1156.jpg" alt="G" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkc8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>G</span>
+                    </div>
+                    <div class="letter-card" data-letter="H">
+                        <img src="{{ DATASET_URL }}H/H1199.jpg" alt="H" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkg8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>H</span>
+                    </div>
+                    <div class="letter-card" data-letter="I">
+                        <img src="{{ DATASET_URL }}I/I1081.jpg" alt="I" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkk8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>I</span>
+                    </div>
+                    <div class="letter-card" data-letter="J">
+                        <img src="{{ DATASET_URL }}J/J1088.jpg" alt="J" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPko8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>J</span>
+                    </div>
+                    <div class="letter-card" data-letter="K">
+                        <img src="{{ DATASET_URL }}K/K1569.jpg" alt="K" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPks8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>K</span>
+                    </div>
+                    <div class="letter-card" data-letter="L">
+                        <img src="{{ DATASET_URL }}L/L864.jpg" alt="L" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPkw8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>L</span>
+                    </div>
+                    <div class="letter-card" data-letter="M">
+                        <img src="{{ DATASET_URL }}M/M1338.jpg" alt="M" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPk08L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>M</span>
+                    </div>
+                    <div class="letter-card" data-letter="N">
+                        <img src="{{ DATASET_URL }}N/N1274.jpg" alt="N" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPk48L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>N</span>
+                    </div>
+                    <div class="letter-card" data-letter="O">
+                        <img src="{{ DATASET_URL }}O/O2321.jpg" alt="O" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPk88L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>O</span>
+                    </div>
+                    <div class="letter-card" data-letter="P">
+                        <img src="{{ DATASET_URL }}P/P1985.jpg" alt="P" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlA8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>P</span>
+                    </div>
+                    <div class="letter-card" data-letter="Q">
+                        <img src="{{ DATASET_URL }}Q/Q965.jpg" alt="Q" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlE8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>Q</span>
+                    </div>
+                    <div class="letter-card" data-letter="R">
+                        <img src="{{ DATASET_URL }}R/R1091.jpg" alt="R" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlI8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>R</span>
+                    </div>
+                    <div class="letter-card" data-letter="S">
+                        <img src="{{ DATASET_URL }}S/S1582.jpg" alt="S" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlM8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>S</span>
+                    </div>
+                    <div class="letter-card" data-letter="T">
+                        <img src="{{ DATASET_URL }}T/T1269.jpg" alt="T" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlQ8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>T</span>
+                    </div>
+                    <div class="letter-card" data-letter="U">
+                        <img src="{{ DATASET_URL }}U/U880.jpg" alt="U" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlU8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>U</span>
+                    </div>
+                    <div class="letter-card" data-letter="V">
+                        <img src="{{ DATASET_URL }}V/V1199.jpg" alt="V" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlY8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>V</span>
+                    </div>
+                    <div class="letter-card" data-letter="W">
+                        <img src="{{ DATASET_URL }}W/W1001.jpg" alt="W" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlc8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>W</span>
+                    </div>
+                    <div class="letter-card" data-letter="X">
+                        <img src="{{ DATASET_URL }}X/X909.jpg" alt="X" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlg8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>X</span>
+                    </div>
+                    <div class="letter-card" data-letter="Y">
+                        <img src="{{ DATASET_URL }}Y/Y977.jpg" alt="Y" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlk8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>Y</span>
+                    </div>
+                    <div class="letter-card" data-letter="Z">
+                        <img src="{{ DATASET_URL }}Z/Z1040.jpg" alt="Z" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiByeD0iOCIgZmlsbD0iI2Y4ZjlmYSIvPgo8dGV4dCB4PSI0MCIgeT0iNDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiPlo8L3RleHQ+Cjwvc3ZnPg=='">
+                        <span>Z</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Image Modal -->
+        <div class="image-modal" id="imageModal">
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-letter" id="modalLetter"></div>
+        </div>
+        
+        <!-- Bonus Popup -->
+        <div class="bonus-popup" id="bonusPopup">
+            <div>🔥 STREAK BONUS! 🔥</div>
+            <div class="bonus-text" id="bonusText">+10 SECONDS</div>
+        </div>
+        
+        <!-- Stop Confirmation Modal -->
+        <div class="stop-confirm-modal" id="stopConfirmModal">
+            <div class="stop-confirm-content">
+                <h2>⚠️ Stop Game?</h2>
+                <p>Are you sure you want to stop the game?</p>
+                <div class="stop-confirm-buttons">
+                    <button class="confirm-btn" onclick="acceptStopGame()">Yes, Stop</button>
+                    <button class="cancel-btn" onclick="declineStopGame()">Resume</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Over Modal - Outside container for proper overlay -->
+        <div class="game-over" id="gameOverModal">
+            <div class="game-over-content">
+                <h2>🎉 Game Over!</h2>
+                <p>Time's up! Here's your final score:</p>
+                <div class="final-score" id="finalScore">0</div>
+                <button onclick="saveScoreAndRedirect()" style="background: #667eea; color: white; margin-top: 20px; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px;">Save & View Leaderboard</button>
+            </div>
+        </div>
+        
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const toggleGuideBtn = document.getElementById('toggleGuideBtn');
+        const toggleInstructionsBtn = document.getElementById('toggleInstructionsBtn');
+        const status = document.getElementById('status');
+        const predictionBox = document.getElementById('predictionBox');
+        const predictionEl = document.getElementById('prediction');
+        const confidenceEl = document.getElementById('confidence');
+        const targetWordEl = document.getElementById('targetWord');
+        const spelledWordEl = document.getElementById('spelledWord');
+        const timerEl = document.getElementById('timer');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const gameOverModal = document.getElementById('gameOverModal');
+        const finalScoreEl = document.getElementById('finalScore');
+        const sidePanel = document.getElementById('sidePanel');
+        const leftPanel = document.getElementById('leftPanel');
+        
+        let stream = null;
+        let isRunning = false;
+        let gameActive = false;
+        let spelledText = '';
+        let targetWord = '';
+        let score = 0;
+        let timeRemaining = 300; // 5 minutes
+        let timerInterval = null;
+        let lastChar = '';
+        let lastSeenChar = '';
+        let confirmationCount = 0;
+        let requiredConfirmations = 3;
+        let cooldownMs = 1000;
+        let handType = 'unknown';
+        let handTypeHistory = [];
+        let wordCompleted = false;
+        let wordProcessing = false;
+        let lastAddedTime = 0;
+        let gameEnded = false;
+        let scoreSaved = false;
+        
+        // Game Mode Variables
+        let gameMode = 'standard'; // 'sprint' or 'standard'
+        let wordTimeLimit = 15; // 10 for sprint, 15 for standard
+        let wordTimeRemaining = 15;
+        let wordTimerInterval = null;
+        let minWordLength = 0; // 3 for sprint, 0 for no limit
+        let maxWordLength = 100; // 4 for sprint, 100 for no limit
+        
+        // Streak Variables
+        let currentStreak = 0;
+        let streakSinceLastBonus = 0;
+        const STREAK_BONUS_THRESHOLD = 5;
+        const STREAK_BONUS_TIME = 10;
+        let lastWordExpired = false;
+        
+        // UI Elements
+        const gameModeDisplay = document.getElementById('gameModeDisplay');
+        const wordTimerBox = document.getElementById('wordTimerBox');
+        const wordTimerEl = document.getElementById('wordTimer');
+        const streakDots = document.querySelectorAll('.streak-dot');
+        const bonusPopup = document.getElementById('bonusPopup');
+        
+        canvas.width = 640;
+        canvas.height = 480;
+        
+        // Initialize game mode display based on URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialMode = urlParams.get('mode') || 'standard';
+        
+        // Hide Clear button for sprint and standard modes (keep only for training mode)
+        if (initialMode === 'sprint' || initialMode === 'standard') {
+            clearBtn.style.display = 'none';
+        }
+        
+        if (initialMode === 'sprint') {
+            gameModeDisplay.textContent = '⚡ SPRINT';
+            gameModeDisplay.style.background = '#fd7e14';
+            gameModeDisplay.style.borderColor = '#d35400';
+            wordTimerEl.textContent = '15';
+        } else {
+            gameModeDisplay.textContent = '🎯 STANDARD';
+            gameModeDisplay.style.background = '#6f42c1';
+            gameModeDisplay.style.borderColor = '#5a32a3';
+            wordTimerEl.textContent = '25';
+        }
+        
+        async function fetchRandomWord() {
+            try {
+                // For sprint mode, fetch multiple words and filter by length
+                if (gameMode === 'sprint') {
+                    const response = await fetch('https://random-word-api.herokuapp.com/word?number=20');
+                    const data = await response.json();
+                    // Filter words that are 3-4 letters long
+                    const validWords = data.filter(word => word.length >= 3 && word.length <= 4);
+                    if (validWords.length > 0) {
+                        return validWords[Math.floor(Math.random() * validWords.length)].toUpperCase();
+                    }
+                    // Fallback to short words if API doesn't return suitable words
+                    const fallbackShortWords = ['CAT', 'DOG', 'RUN', 'JUMP', 'PLAY', 'GAME', 'HAND', 'SIGN', 'WORD', 'FAST'];
+                    return fallbackShortWords[Math.floor(Math.random() * fallbackShortWords.length)];
+                } else {
+                    // Standard mode - words up to 8 letters
+                    const response = await fetch('https://random-word-api.herokuapp.com/word?number=10');
+                    const data = await response.json();
+                    // Filter words that are 8 letters or less
+                    const validWords = data.filter(word => word.length <= 8);
+                    if (validWords.length > 0) {
+                        return validWords[Math.floor(Math.random() * validWords.length)].toUpperCase();
+                    }
+                    // Fallback to shorter words if API doesn't return suitable words
+                    const fallbackWords = ['HELLO', 'WORLD', 'PYTHON', 'SIGN', 'GAME', 'PLAY', 'HAND', 'LEARN'];
+                    return fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+                }
+            } catch (err) {
+                // Fallback words if API fails
+                if (gameMode === 'sprint') {
+                    const fallbackShortWords = ['CAT', 'DOG', 'RUN', 'JUMP', 'PLAY', 'GAME', 'HAND', 'SIGN', 'WORD', 'FAST'];
+                    return fallbackShortWords[Math.floor(Math.random() * fallbackShortWords.length)];
+                } else {
+                    const fallbackWords = ['HELLO', 'WORLD', 'PYTHON', 'SIGN', 'GAME', 'PLAY', 'HAND', 'LEARN'];
+                    return fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+                }
+            }
+        }
+        
+        async function startGame() {
+            try {
+                // Stop BGM and play game sounds
+                bgmAudio.pause();
+                bgmAudio.currentTime = 0;
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+                
+                // Play start game and timer sounds together
+                startGameSound.currentTime = 0;
+                startGameSound.volume = 0.6;
+                startGameSound.play().catch(err => console.log('Start game sound failed:', err));
+                
+                timerSound.currentTime = 0;
+                timerSound.volume = 0.6;
+                timerSound.play().catch(err => console.log('Timer sound failed:', err));
+                
+                // Check for game mode in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                gameMode = urlParams.get('mode') || 'standard';
+                
+                // Set game mode settings
+                if (gameMode === 'sprint') {
+                    wordTimeLimit = 15;
+                    gameModeDisplay.textContent = '⚡ SPRINT';
+                    gameModeDisplay.style.background = '#fd7e14';
+                    gameModeDisplay.style.borderColor = '#d35400';
+                } else {
+                    wordTimeLimit = 25;
+                    gameModeDisplay.textContent = '🎯 STANDARD';
+                    gameModeDisplay.style.background = '#6f42c1';
+                    gameModeDisplay.style.borderColor = '#5a32a3';
+                }
+                
+                // Reset streak tracking
+                currentStreak = 0;
+                streakSinceLastBonus = 0;
+                lastWordExpired = false;
+                updateStreakDisplay();
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480, facingMode: 'user' }
+                });
+                video.srcObject = stream;
+                
+                targetWord = await fetchRandomWord();
+                targetWordEl.textContent = targetWord;
+                spelledText = '';
+                updateSpelledDisplay();
+                highlightCurrentLetter();
+                score = 0;
+                scoreDisplay.textContent = score;
+                timeRemaining = 300;
+                gameActive = true;
+                gameEnded = false;
+                scoreSaved = false;
+                
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                status.innerHTML = '<span class="hand-detected">Game started! Spell the word...</span>';
+                
+                startTimer();
+                startWordTimer();
+                predictLoop();
+            } catch (err) {
+                status.innerHTML = `<span class="hand-not-detected">Error: ${err.message}</span>`;
+            }
+        }
+        
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    endGame();
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            timerEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+        
+        function stopGame() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            video.srcObject = null;
+            isRunning = false;
+            gameActive = false;
+            
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            
+            if (wordTimerInterval) {
+                clearInterval(wordTimerInterval);
+                wordTimerInterval = null;
+            }
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            predictionBox.style.display = 'none';
+            status.textContent = 'Game stopped.';
+        }
+        
+        // Stop Confirmation Functions
+        function confirmStopGame() {
+            const modal = document.getElementById('stopConfirmModal');
+            modal.style.display = 'flex';
+        }
+        
+        function acceptStopGame() {
+            const modal = document.getElementById('stopConfirmModal');
+            modal.style.display = 'none';
+            stopGame();
+            location.reload(); // Refresh the page
+        }
+        
+        function declineStopGame() {
+            const modal = document.getElementById('stopConfirmModal');
+            modal.style.display = 'none';
+            // Resume the game - just hide the modal, game continues
+        }
+        
+        // Word Timer Functions
+        function startWordTimer() {
+            wordTimeRemaining = wordTimeLimit;
+            updateWordTimerDisplay();
+            if (wordTimerInterval) clearInterval(wordTimerInterval);
+            wordTimerInterval = setInterval(() => {
+                wordTimeRemaining--;
+                updateWordTimerDisplay();
+                if (wordTimeRemaining <= 0) {
+                    handleWordExpired();
+                }
+            }, 1000);
+        }
+        
+        function stopWordTimer() {
+            if (wordTimerInterval) {
+                clearInterval(wordTimerInterval);
+                wordTimerInterval = null;
+            }
+        }
+        
+        function updateWordTimerDisplay() {
+            wordTimerEl.textContent = wordTimeRemaining;
+            if (wordTimeRemaining <= 3) {
+                wordTimerBox.classList.add('warning');
+            } else {
+                wordTimerBox.classList.remove('warning');
+            }
+        }
+        
+        function handleWordExpired() {
+            stopWordTimer();
+            lastWordExpired = true;
+            currentStreak = 0;
+            streakSinceLastBonus = 0;
+            updateStreakDisplay();
+            status.innerHTML = '<span class="hand-not-detected">⏱️ Time up! Skipping word...</span>';
+            setTimeout(async () => {
+                targetWord = await fetchRandomWord();
+                targetWordEl.textContent = targetWord;
+                spelledText = '';
+                wordCompleted = false;
+                wordProcessing = false;
+                updateSpelledDisplay();
+                highlightCurrentLetter();
+                startWordTimer();
+                status.innerHTML = '<span class="hand-detected">New word! Spell it quickly...</span>';
+            }, 1500);
+        }
+        
+        // Streak Functions
+        function updateStreakDisplay() {
+            streakDots.forEach((dot, index) => {
+                if (index < streakSinceLastBonus) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        function addStreakAndCheckBonus() {
+            if (!lastWordExpired) {
+                currentStreak++;
+                streakSinceLastBonus++;
+                if (streakSinceLastBonus >= STREAK_BONUS_THRESHOLD) {
+                    awardStreakBonus();
+                    streakSinceLastBonus = 0;
+                }
+                updateStreakDisplay();
+            }
+            lastWordExpired = false;
+        }
+        
+        function awardStreakBonus() {
+            const bonusTime = gameMode === 'standard' ? 20 : 10;
+            timeRemaining += bonusTime;
+            updateTimerDisplay();
+            
+            // Update bonus popup text
+            const bonusTextEl = document.getElementById('bonusText');
+            bonusTextEl.textContent = `+${bonusTime} SECONDS`;
+            
+            bonusPopup.classList.add('show');
+            setTimeout(() => bonusPopup.classList.remove('show'), 2000);
+        }
+        
+        function endGame() {
+            if (gameEnded) return;
+            gameEnded = true;
+            stopGame();
+            finalScoreEl.textContent = score;
+            gameOverModal.style.display = 'flex';
+            
+            // Play game over sound
+            gameOverSound.currentTime = 0;
+            gameOverSound.volume = 0.7;
+            gameOverSound.play().catch(err => console.log('Game over sound failed:', err));
+        }
+        
+        async function saveScoreAndRedirect() {
+            if (scoreSaved) {
+                window.location.href = '{% url "leaderboard" %}';
+                return;
+            }
+            scoreSaved = true;
+            
+            try {
+                console.log('Saving score:', score, 'Duration:', 300 - timeRemaining);
+                
+                const response = await fetch('/api/save-score/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        score: score,
+                        duration: 300 - timeRemaining,
+                        game_mode: gameMode
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('Save score response:', result);
+                
+                if (response.ok) {
+                    console.log('Score saved successfully!');
+                } else {
+                    console.error('Failed to save score:', result.error);
+                }
+                
+                window.location.href = '{% url "leaderboard" %}';
+            } catch (err) {
+                console.error('Error saving score:', err);
+                window.location.href = '{% url "leaderboard" %}';
+            }
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        function clearSpelled() {
+            spelledText = '';
+            updateSpelledDisplay();
+        }
+        
+        async function predictLoop() {
+            if (!isRunning && !gameActive) return;
+            if (!gameActive) return;
+            
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/jpeg', 0.8);
+            
+            try {
+                const response = await fetch('/api/predict/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ image: imageData })
+                });
+                
+                const result = await response.json();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (result.hand_detected) {
+                    predictionBox.style.display = 'block';
+                    
+                    if (result.normalized_coords) {
+                        drawLandmarks(result.normalized_coords);
+                        drawBoundingBox(result.normalized_coords, result.prediction || result.raw_prediction);
+                    }
+                    
+                    console.log('=== Prediction Debug ===');
+                    console.log('Raw prediction:', result.prediction, 'Confidence:', result.confidence);
+                    console.log('Hand detected:', result.hand_detected);
+                    console.log('All probabilities:', result.all_probabilities);
+                    
+                    if (result.prediction) {
+                        const predChar = result.prediction;
+                        const currentTime = Date.now();
+                        
+                        // Enhanced accuracy for A and S
+                        let adjustedConfidence = result.confidence;
+                        let adjustedPrediction = predChar;
+                        
+                        if (result.normalized_coords) {
+                            // Detect hand type and adjust predictions
+                            const detectedHandType = detectHandType(result.normalized_coords);
+                            handTypeHistory.push(detectedHandType);
+                            if (handTypeHistory.length > 5) handTypeHistory.shift();
+                            
+                            const mostCommonHandType = getMostCommon(handTypeHistory);
+                            console.log('Hand type detected:', mostCommonHandType);
+                            
+                            // Apply hand-specific adjustments for A, S, and T, and check for T vs X and V vs U confusion
+                            if (predChar === 'A' || predChar === 'S' || predChar === 'T') {
+                                adjustedConfidence = enhanceASAccuracy(predChar, result.normalized_coords, mostCommonHandType, result.confidence);
+                                console.log('Enhanced confidence for', predChar, ':', adjustedConfidence);
+                            }
+                            
+                            // Check for T vs X confusion - if model predicts X but looks like T, correct it
+                            if (predChar === 'X' && result.normalized_coords) {
+                                const tCorrection = checkTvsXConfusion(result.normalized_coords, mostCommonHandType, result.confidence);
+                                console.log('X detected, checking if it should be T. T score:', tCorrection.isActuallyT);
+                                if (tCorrection.isActuallyT) {
+                                    adjustedPrediction = 'T';
+                                    adjustedConfidence = tCorrection.adjustedConfidence;
+                                    console.log('Corrected X to T with confidence:', adjustedConfidence);
+                                }
+                            }
+                            
+                            // Check for V vs U confusion - if model predicts V but looks like U, correct it
+                            if (predChar === 'V' && result.normalized_coords) {
+                                const uCorrection = checkVvsUConfusion(result.normalized_coords, mostCommonHandType, result.confidence);
+                                console.log('V detected, checking if it should be U. U score:', uCorrection.isActuallyU);
+                                if (uCorrection.isActuallyU) {
+                                    adjustedPrediction = 'U';
+                                    adjustedConfidence = uCorrection.adjustedConfidence;
+                                    console.log('Corrected V to U with confidence:', adjustedConfidence);
+                                }
+                            }
+                            
+                            // Fallback: If no prediction after corrections, use raw prediction
+                            if (!adjustedPrediction && result.raw_prediction) {
+                                adjustedPrediction = result.raw_prediction;
+                                adjustedConfidence = Math.max(adjustedConfidence, 0.16); // Ensure it passes threshold
+                                console.log('Using raw prediction as fallback:', adjustedPrediction);
+                            }
+                        }
+                        
+                        predictionEl.textContent = adjustedPrediction;
+                        confidenceEl.textContent = `Confidence: ${(adjustedConfidence * 100).toFixed(1)}%`;
+                        
+                        // Always process predictions with 15% threshold
+                        console.log('Checking threshold:', adjustedConfidence, '>= 0.15?');
+                        if (adjustedConfidence >= 0.15) {
+                            if (adjustedPrediction === lastSeenChar) {
+                                confirmationCount++;
+                                console.log(`Confirmation ${confirmationCount}/${requiredConfirmations} for ${adjustedPrediction}`);
+                            } else {
+                                confirmationCount = 1;
+                                lastSeenChar = adjustedPrediction;
+                                console.log(`New character ${adjustedPrediction}, starting confirmation count at 1`);
+                            }
+                            
+                            status.innerHTML = `<span class="hand-detected">Detected: ${adjustedPrediction} (${confirmationCount}/${requiredConfirmations})</span>`;
+                        } else {
+                            predictionEl.textContent = adjustedPrediction;
+                            confidenceEl.textContent = `Confidence: ${(adjustedConfidence * 100).toFixed(1)}% (below 15% threshold)`;
+                            confirmationCount = 0; // Reset on low confidence
+                            status.innerHTML = `<span class="hand-detected">Hand detected but confidence too low</span>`;
+                            console.log('Confidence too low, reset confirmation count');
+                        }
+                        
+                        console.log('Final check - confirmationCount:', confirmationCount, 'requiredConfirmations:', requiredConfirmations);
+                        console.log('Cooldown check:', currentTime - lastAddedTime, '>=', cooldownMs, '?');
+                        console.log('Letter match check:', adjustedPrediction, '!==', lastChar, '?');
+                        
+                        // Only process letter if we have enough confirmations AND either cooldown passed OR new character
+                        if (confirmationCount >= requiredConfirmations) {
+                            console.log('Reached required confirmations!');
+                            const timeSinceLastAdd = currentTime - lastAddedTime;
+                            const charChanged = adjustedPrediction !== lastChar;
+                            console.log('Cooldown details:', {timeSinceLastAdd, cooldownMs, charChanged, lastChar, adjustedPrediction});
+                            
+                            // More strict conditions to prevent duplicate letters
+                            if ((timeSinceLastAdd >= cooldownMs && charChanged) || spelledText.length === 0) {
+                                console.log('PASSED cooldown/char check! Adding letter...');
+                                console.log('Target word:', targetWord, 'Next position:', spelledText.length);
+                                console.log('Expected letter:', targetWord[spelledText.length], 'Got:', adjustedPrediction);
+                                
+                                // Only add letter if it matches the expected letter at current position
+                                const nextPosition = spelledText.length;
+                                if (nextPosition < targetWord.length && adjustedPrediction === targetWord[nextPosition]) {
+                                    spelledText += adjustedPrediction;
+                                    console.log('SUCCESS! Letter added:', adjustedPrediction);
+                                    console.log('Current spelled text:', spelledText);
+                                } else if (nextPosition < targetWord.length) {
+                                    // Wrong letter - show expected letter
+                                    console.log('FAILED! Wrong letter at position', nextPosition);
+                                    console.log('Expected:', targetWord[nextPosition], 'Got:', adjustedPrediction);
+                                    status.innerHTML = `<span class="hand-not-detected">❌ Wrong letter! Expected: ${targetWord[nextPosition]}</span>`;
+                                    setTimeout(() => {
+                                        status.innerHTML = '<span class="hand-detected">Keep spelling...</span>';
+                                    }, 1000);
+                                } else {
+                                    // Word already completed
+                                    console.log('Word already completed, ignoring extra letters');
+                                }
+                                
+                                updateSpelledDisplay();
+                                highlightCurrentLetter();
+                                lastChar = adjustedPrediction;
+                                lastAddedTime = currentTime;
+                                confirmationCount = 0;
+                                
+                                checkWordMatch();
+                            } else {
+                                console.log('FAILED cooldown/char check - NOT adding letter');
+                                console.log('Time since last add:', timeSinceLastAdd, 'ms, required:', cooldownMs, 'ms');
+                                console.log('Character changed:', charChanged);
+                            }
+                        }
+                    }
+                } else {
+                    predictionBox.style.display = 'none';
+                    status.innerHTML = '<span class="hand-not-detected">No hand detected</span>';
+                }
+            } catch (err) {
+                console.error('Prediction error:', err);
+            }
+            
+            setTimeout(predictLoop, 200);
+        }
+        
+        function updateSpelledDisplay() {
+            // Show remaining letters to fill
+            let displayText = '';
+            for (let i = 0; i < targetWord.length; i++) {
+                if (i < spelledText.length) {
+                    displayText += spelledText[i];
+                } else {
+                    displayText += '_';
+                }
+            }
+            spelledWordEl.textContent = displayText;
+        }
+        
+        async function checkWordMatch() {
+            if (wordCompleted || wordProcessing) {
+                console.log('Word already completed or processing, skipping check');
+                return;
+            }
+            
+            console.log('Checking word match:', spelledText, '===', targetWord, '?');
+            
+            if (spelledText === targetWord) {
+                wordProcessing = true;
+                wordCompleted = true;
+                score++;
+                scoreDisplay.textContent = score;
+                
+                // Stop the word timer (word was completed in time)
+                stopWordTimer();
+                
+                // Add to streak and check for bonus
+                addStreakAndCheckBonus();
+                
+                console.log('Word completed! Score:', score, 'Streak:', currentStreak);
+                status.innerHTML = '<span class="hand-detected">🎉 Correct! Loading new word...</span>';
+                
+                setTimeout(async () => {
+                    targetWord = await fetchRandomWord();
+                    targetWordEl.textContent = targetWord;
+                    spelledText = '';
+                    wordCompleted = false;
+                    wordProcessing = false;
+                    updateSpelledDisplay();
+                    highlightCurrentLetter();
+                    
+                    // Start timer for new word
+                    startWordTimer();
+                    
+                    status.innerHTML = '<span class="hand-detected">New word! Spell it quickly...</span>';
+                }, 1500);
+            } else if (spelledText.length >= targetWord.length && spelledText !== targetWord) {
+                wordProcessing = true;
+                status.innerHTML = '<span class="hand-not-detected">❌ Wrong! Try again.</span>';
+                setTimeout(() => {
+                    spelledText = '';
+                    wordProcessing = false;
+                    updateSpelledDisplay();
+                }, 1000);
+            }
+        }
+        
+        function drawLandmarks(coords) {
+            const connections = [
+                [0, 1], [1, 2], [2, 3], [3, 4],
+                [0, 5], [5, 6], [6, 7], [7, 8],
+                [0, 9], [9, 10], [10, 11], [11, 12],
+                [0, 13], [13, 14], [14, 15], [15, 16],
+                [0, 17], [17, 18], [18, 19], [19, 20],
+                [5, 9], [9, 13], [13, 17]
+            ];
+            
+            ctx.strokeStyle = '#00FF00';
+            ctx.lineWidth = 3;
+            
+            connections.forEach(([start, end]) => {
+                const startPt = coords[start];
+                const endPt = coords[end];
+                ctx.beginPath();
+                ctx.moveTo(startPt.x * canvas.width, startPt.y * canvas.height);
+                ctx.lineTo(endPt.x * canvas.width, endPt.y * canvas.height);
+                ctx.stroke();
+            });
+            
+            coords.forEach((pt, i) => {
+                ctx.beginPath();
+                ctx.arc(pt.x * canvas.width, pt.y * canvas.height, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = i === 0 ? '#FF0000' : '#00FF00';
+                ctx.fill();
+                ctx.strokeStyle = '#FFFFFF';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+        
+        function drawBoundingBox(coords, prediction) {
+            let minX = 1, minY = 1, maxX = 0, maxY = 0;
+            
+            coords.forEach(pt => {
+                minX = Math.min(minX, pt.x);
+                minY = Math.min(minY, pt.y);
+                maxX = Math.max(maxX, pt.x);
+                maxY = Math.max(maxY, pt.y);
+            });
+            
+            const padding = 20;
+            minX = Math.max(0, minX * canvas.width - padding);
+            minY = Math.max(0, minY * canvas.height - padding);
+            maxX = Math.min(canvas.width, maxX * canvas.width + padding);
+            maxY = Math.min(canvas.height, maxY * canvas.height + padding);
+            
+            ctx.strokeStyle = '#00FF00';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(minX, minY, maxX - minX, maxY - minY);
+            
+            if (prediction) {
+                ctx.fillStyle = '#00FF00';
+                ctx.font = 'bold 24px Arial';
+                ctx.fillText(prediction, minX + 5, minY - 10);
+            }
+        }
+        
+        // Helper functions for enhanced A and S detection
+        function detectHandType(coords) {
+            if (!coords || coords.length < 21) return 'unknown';
+            
+            // Use multiple features to determine handedness more accurately
+            const thumbTip = coords[4];
+            const indexTip = coords[8];
+            const middleTip = coords[12];
+            const ringTip = coords[16];
+            const pinkyTip = coords[20];
+            const wrist = coords[0];
+            const indexMCP = coords[5];
+            const middleMCP = coords[9];
+            
+            // Method 1: Thumb position relative to palm center
+            const palmCenter = {
+                x: (indexMCP.x + middleMCP.x) / 2,
+                y: (indexMCP.y + middleMCP.y) / 2
+            };
+            const thumbOffsetX = thumbTip.x - palmCenter.x;
+            
+            // Method 2: Hand orientation based on finger direction
+            const handDirection = indexTip.x - wrist.x;
+            
+            // Method 3: Thumb angle relative to palm
+            const thumbAngle = Math.atan2(thumbTip.y - wrist.y, thumbTip.x - wrist.x);
+            
+            // Combine multiple indicators for more accurate detection
+            let rightHandScore = 0;
+            let leftHandScore = 0;
+            
+            // Thumb position indicator
+            if (thumbOffsetX > 0.08) rightHandScore += 2;
+            else if (thumbOffsetX < -0.08) leftHandScore += 2;
+            
+            // Hand direction indicator (assuming camera faces the user)
+            if (handDirection > 0.05) rightHandScore += 1;
+            else if (handDirection < -0.05) leftHandScore += 1;
+            
+            // Thumb angle indicator for right hand (thumb should point more upward/right)
+            if (thumbAngle > -0.5 && thumbAngle < 0.5) rightHandScore += 1;
+            else if (thumbAngle > 2.5 || thumbAngle < -2.5) leftHandScore += 1;
+            
+            // Determine hand type with confidence
+            if (rightHandScore >= leftHandScore + 2) return 'right';
+            if (leftHandScore >= rightHandScore + 2) return 'left';
+            
+            return 'unknown';
+        }
+        
+        function getMostCommon(arr) {
+            if (arr.length === 0) return 'unknown';
+            const counts = {};
+            arr.forEach(item => {
+                counts[item] = (counts[item] || 0) + 1;
+            });
+            return Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+        }
+        
+        function enhanceASAccuracy(letter, coords, handType, originalConfidence) {
+            if (!coords || coords.length < 21) return originalConfidence;
+            
+            let confidenceBonus = 0;
+            
+            if (letter === 'A') {
+                // A sign: thumb should be extended outward, other fingers curled
+                const thumbTip = coords[4];
+                const thumbMCP = coords[2];
+                const indexTip = coords[8];
+                const middleTip = coords[12];
+                const ringTip = coords[16];
+                const pinkyTip = coords[20];
+                const wrist = coords[0];
+                
+                // Check if thumb is extended (far from wrist)
+                const thumbExtended = Math.abs(thumbTip.x - wrist.x) + Math.abs(thumbTip.y - wrist.y) > 0.4;
+                
+                // Check if other fingers are curled (tips close to palm)
+                const fingersCurled = (Math.abs(indexTip.y - wrist.y) < 0.3 &&
+                                    Math.abs(middleTip.y - wrist.y) < 0.3 &&
+                                    Math.abs(ringTip.y - wrist.y) < 0.3 &&
+                                    Math.abs(pinkyTip.y - wrist.y) < 0.3);
+                
+                if (thumbExtended && fingersCurled) {
+                    confidenceBonus = 0.15;
+                }
+                
+                // Hand-specific adjustment for A
+                if (handType === 'right' && thumbTip.x > wrist.x + 0.2) {
+                    confidenceBonus += 0.05; // Right hand thumb pointing right
+                } else if (handType === 'left' && thumbTip.x < wrist.x - 0.2) {
+                    confidenceBonus += 0.05; // Left hand thumb pointing left
+                }
+                
+            } else if (letter === 'S') {
+                // S sign: thumb tucked over fingers, all fingers curled
+                const thumbTip = coords[4];
+                const indexTip = coords[8];
+                const middleTip = coords[12];
+                const ringTip = coords[16];
+                const pinkyTip = coords[20];
+                const wrist = coords[0];
+                
+                // Check if all fingertips are close to wrist (curled)
+                const allFingersCurled = (Math.abs(thumbTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(indexTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(middleTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(ringTip.y - wrist.y) < 0.25 &&
+                                       Math.abs(pinkyTip.y - wrist.y) < 0.25);
+                
+                // Check if thumb is positioned over other fingers (not extended)
+                const thumbTucked = Math.abs(thumbTip.y - indexTip.y) < 0.15;
+                
+                if (allFingersCurled && thumbTucked) {
+                    confidenceBonus = 0.20;
+                }
+                
+            } else if (letter === 'T') {
+                // T sign: thumb tucked between index and middle fingers, other fingers extended
+                const thumbTip = coords[4];
+                const indexTip = coords[8];
+                const middleTip = coords[12];
+                const ringTip = coords[16];
+                const pinkyTip = coords[20];
+                const wrist = coords[0];
+                const indexMCP = coords[5];
+                const middleMCP = coords[9];
+                
+                // Check if thumb is positioned between index and middle fingers
+                const thumbBetweenFingers = (thumbTip.x > Math.min(indexMCP.x, middleMCP.x) - 0.05 && 
+                                          thumbTip.x < Math.max(indexMCP.x, middleMCP.x) + 0.05 &&
+                                          thumbTip.y > Math.min(indexMCP.y, middleMCP.y) - 0.05 &&
+                                          thumbTip.y < Math.max(indexMCP.y, middleMCP.y) + 0.05);
+                
+                // Check if index and middle fingers are extended upward
+                const indexExtended = indexTip.y < wrist.y - 0.3;
+                const middleExtended = middleTip.y < wrist.y - 0.3;
+                
+                // Check if ring and pinky are curled (for T sign, they should be down)
+                const ringCurled = ringTip.y > wrist.y - 0.1;
+                const pinkyCurled = pinkyTip.y > wrist.y - 0.1;
+                
+                // Right hand specific adjustment for T
+                if (handType === 'right') {
+                    // For right hand, thumb should be more visible from palm side
+                    const thumbFromPalm = Math.abs(thumbTip.x - wrist.x);
+                    if (thumbFromPalm > 0.15 && thumbFromPalm < 0.35) {
+                        confidenceBonus += 0.10;
+                    }
+                    
+                    // Check for proper T formation in right hand
+                    if (thumbBetweenFingers && indexExtended && middleExtended && ringCurled && pinkyCurled) {
+                        confidenceBonus += 0.25;
+                    }
+                } else if (handType === 'left') {
+                    // Left hand specific adjustments
+                    if (thumbBetweenFingers && indexExtended && middleExtended && ringCurled && pinkyCurled) {
+                        confidenceBonus += 0.20;
+                    }
+                }
+                
+                // General T sign verification
+                if (thumbBetweenFingers && indexExtended && middleExtended) {
+                    confidenceBonus += 0.15;
+                }
+            }
+            
+            return Math.min(1.0, originalConfidence + confidenceBonus);
+        }
+        
+        function checkTvsXConfusion(coords, handType, originalConfidence) {
+            if (!coords || coords.length < 21) return { isActuallyT: false, adjustedConfidence: originalConfidence };
+            
+            const thumbTip = coords[4];
+            const indexTip = coords[8];
+            const middleTip = coords[12];
+            const ringTip = coords[16];
+            const pinkyTip = coords[20];
+            const wrist = coords[0];
+            const indexMCP = coords[5];
+            const middleMCP = coords[9];
+            
+            // Key differences between T and X:
+            // T: thumb between index & middle, both index and middle extended
+            // X: index finger extended, other fingers curled (including middle)
+            
+            // Check if middle finger is extended (T) or curled (X)
+            const middleExtended = middleTip.y < wrist.y - 0.25;
+            const middleCurled = middleTip.y > wrist.y - 0.15;
+            
+            // Check if index finger is extended (both T and X have this)
+            const indexExtended = indexTip.y < wrist.y - 0.25;
+            
+            // Check thumb position (T has thumb between fingers, X has thumb curled or extended)
+            const thumbBetweenFingers = (thumbTip.x > Math.min(indexMCP.x, middleMCP.x) - 0.08 && 
+                                       thumbTip.x < Math.max(indexMCP.x, middleMCP.x) + 0.08 &&
+                                       thumbTip.y > Math.min(indexMCP.y, middleMCP.y) - 0.08 &&
+                                       thumbTip.y < Math.max(indexMCP.y, middleMCP.y) + 0.08);
+            
+            // Check ring and pinky (T: curled, X: curled)
+            const ringCurled = ringTip.y > wrist.y - 0.15;
+            const pinkyCurled = pinkyTip.y > wrist.y - 0.15;
+            
+            // Strong T indicators
+            const tIndicators = [
+                middleExtended,      // Middle finger extended
+                indexExtended,       // Index finger extended  
+                thumbBetweenFingers, // Thumb between fingers
+                ringCurled,          // Ring curled
+                pinkyCurled          // Pinky curled
+            ];
+            
+            const tScore = tIndicators.filter(Boolean).length;
+            
+            // Strong X indicators
+            const xIndicators = [
+                indexExtended,       // Index finger extended
+                middleCurled,        // Middle finger curled
+                ringCurled,          // Ring curled
+                pinkyCurled          // Pinky curled
+            ];
+            
+            const xScore = xIndicators.filter(Boolean).length;
+            
+            // Decision logic
+            if (tScore >= 4 && middleExtended && thumbBetweenFingers) {
+                // Strong evidence for T
+                const confidenceBonus = tScore === 5 ? 0.30 : 0.20;
+                return {
+                    isActuallyT: true,
+                    adjustedConfidence: Math.min(1.0, originalConfidence + confidenceBonus)
+                };
+            } else if (tScore >= 3 && middleExtended && indexExtended) {
+                // Moderate evidence for T
+                return {
+                    isActuallyT: true,
+                    adjustedConfidence: Math.min(1.0, originalConfidence + 0.15)
+                };
+            }
+            
+            return { isActuallyT: false, adjustedConfidence: originalConfidence };
+        }
+        
+        function checkVvsUConfusion(coords, handType, originalConfidence) {
+            if (!coords || coords.length < 21) return { isActuallyU: false, adjustedConfidence: originalConfidence };
+            
+            const indexTip = coords[8];
+            const middleTip = coords[12];
+            const ringTip = coords[16];
+            const pinkyTip = coords[20];
+            const wrist = coords[0];
+            const indexMCP = coords[5];
+            const middleMCP = coords[9];
+            const ringMCP = coords[13];
+            
+            // Key differences between V and U:
+            // V: index and middle fingers extended and spread apart, ring and pinky curled
+            // U: index and middle fingers extended and close together, ring and pinky curled
+            
+            // Check if index and middle are extended (both V and U have this)
+            const indexExtended = indexTip.y < wrist.y - 0.25;
+            const middleExtended = middleTip.y < wrist.y - 0.25;
+            
+            // Check if ring and pinky are curled (both V and U have this)
+            const ringCurled = ringTip.y > wrist.y - 0.15;
+            const pinkyCurled = pinkyTip.y > wrist.y - 0.15;
+            
+            // Check spread between index and middle fingers (key differentiator)
+            const indexMiddleSpread = Math.abs(indexTip.x - middleTip.x);
+            const indexMiddleSpreadAtMCP = Math.abs(indexMCP.x - middleMCP.x);
+            
+            // V sign: fingers should be spread apart (wider at tips than at MCP joints)
+            const spreadWiderAtTips = indexMiddleSpread > indexMiddleSpreadAtMCP + 0.05;
+            
+            // U sign: fingers should stay close together
+            const fingersCloseTogether = indexMiddleSpread < 0.15;
+            
+            // Strong U indicators
+            const uIndicators = [
+                indexExtended,       // Index finger extended
+                middleExtended,      // Middle finger extended
+                ringCurled,          // Ring curled
+                pinkyCurled,         // Pinky curled
+                fingersCloseTogether  // Fingers close together
+            ];
+            
+            const uScore = uIndicators.filter(Boolean).length;
+            
+            // Strong V indicators
+            const vIndicators = [
+                indexExtended,       // Index finger extended
+                middleExtended,      // Middle finger extended
+                ringCurled,          // Ring curled
+                pinkyCurled,         // Pinky curled
+                spreadWiderAtTips   // Fingers spread apart
+            ];
+            
+            const vScore = vIndicators.filter(Boolean).length;
+            
+            // Decision logic
+            if (uScore >= 4 && fingersCloseTogether && indexExtended && middleExtended) {
+                // Strong evidence for U
+                const confidenceBonus = uScore === 5 ? 0.30 : 0.20;
+                return {
+                    isActuallyU: true,
+                    adjustedConfidence: Math.min(1.0, originalConfidence + confidenceBonus)
+                };
+            } else if (uScore >= 3 && fingersCloseTogether) {
+                // Moderate evidence for U
+                return {
+                    isActuallyU: true,
+                    adjustedConfidence: Math.min(1.0, originalConfidence + 0.15)
+                };
+            }
+            
+            return { isActuallyU: false, adjustedConfidence: originalConfidence };
+        }
+        
+        startBtn.addEventListener('click', startGame);
+        stopBtn.addEventListener('click', confirmStopGame);
+        clearBtn.addEventListener('click', clearSpelled);
+        toggleGuideBtn.addEventListener('click', toggleGuide);
+        toggleInstructionsBtn.addEventListener('click', toggleInstructions);
+        
+        // ASL Guide Modal functionality - wait for DOM to load
+        setTimeout(() => {
+            document.querySelectorAll('.letter-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const letter = this.dataset.letter;
+                    const img = this.querySelector('img').src;
+                    openModal(letter, img);
+                });
+            });
+        }, 100);
+        
+        imageModal.addEventListener('click', closeModal);
+        modalImage.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        function openModal(letter, imgSrc) {
+            modalImage.src = imgSrc;
+            modalLetter.textContent = letter;
+            imageModal.classList.add('active');
+        }
+        
+        function closeModal() {
+            imageModal.classList.remove('active');
+        }
+        
+        function toggleGuide() {
+            sidePanel.classList.toggle('hidden');
+            const isHidden = sidePanel.classList.contains('hidden');
+            toggleGuideBtn.textContent = isHidden ? '📖 Show Guide' : '📖 Hide Guide';
+        }
+        
+        function toggleInstructions() {
+            leftPanel.classList.toggle('hidden');
+            const isHidden = leftPanel.classList.contains('hidden');
+            toggleInstructionsBtn.textContent = isHidden ? '📋 Show Instructions' : '📋 Hide Instructions';
+        }
+        
+        function highlightCurrentLetter() {
+            // Remove all active classes
+            document.querySelectorAll('.letter-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Highlight current needed letter
+            if (targetWord && spelledText.length < targetWord.length) {
+                const nextLetter = targetWord[spelledText.length];
+                const card = document.querySelector(`[data-letter="${nextLetter}"]`);
+                if (card) {
+                    card.classList.add('active');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+        
+        // Audio elements and controls
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        const startGameSound = document.getElementById('startGameSound');
+        const timerSound = document.getElementById('timerSound');
+        const gameOverSound = document.getElementById('gameOverSound');
+        
+        // Start BGM on page load (but not if coming from another page where BGM was playing)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const shouldPlayBgm = sessionStorage.getItem('shouldPlayBgm');
+            
+            bgmAudio.volume = 0.3;
+            
+            // Only play BGM if it should be playing (not in game)
+            if (shouldPlayBgm === 'true' && bgmState !== 'stopped') {
+                bgmAudio.play().catch(err => console.log('BGM autoplay failed:', err));
+            }
+            
+            // Update BGM state
+            sessionStorage.setItem('bgmState', 'playing');
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Don't play button sound for start game (it has its own sound)
+                    if (button.id !== 'startBtn') {
+                        buttonSound.currentTime = 0;
+                        buttonSound.volume = 0.5;
+                        buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

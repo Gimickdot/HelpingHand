@@ -1,0 +1,513 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ASL Game</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/static/images/bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+        }
+        
+        .title-box {
+            background: #f5e6c8;
+            border: 3px solid #8b7355;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #FFD700;
+            font-size: 24px;
+            margin: 0;
+            text-align: center;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+        }
+        
+        .welcome {
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+        }
+        
+        .container {
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            padding: 25px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .nav-links a {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            padding: 12px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.1s;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            color: white;
+        }
+        
+        .nav-links a.profile {
+            background: #27ae60;
+            border: 2px solid #1a8a4b;
+        }
+        
+        .nav-links a:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        .nav-links a.home {
+            background: #4a90e2;
+            border: 2px solid #357abd;
+        }
+        
+        .nav-links a.profile {
+            background: #27ae60;
+            border: 2px solid #1a8a4b;
+        }
+        
+        .nav-links a.leaderboard {
+            background: #9b59b6;
+            border: 2px solid #7d3c98;
+        }
+        
+        .nav-links a.logout {
+            background: #e74c3c;
+            border: 2px solid #c0392b;
+        }
+        
+        .play-section {
+            text-align: center;
+            padding: 30px;
+            background: #8b7355;
+            border: 3px solid #5a4a3a;
+            margin-bottom: 25px;
+        }
+        
+        .play-section h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .play-section p {
+            color: white;
+            font-size: 11px;
+            margin-bottom: 20px;
+        }
+        
+        .play-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            display: inline-block;
+            padding: 15px 35px;
+            background: #27ae60;
+            border: 3px solid #1a8a4b;
+            color: white;
+            text-decoration: none;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+        }
+        
+        .play-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .mode-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .mode-btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 20px;
+            border: 3px solid rgba(0,0,0,0.3);
+            border-radius: 12px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.2s;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .mode-btn.standard:hover {
+            transform: translateY(-2px);
+            background: #6f42c1;
+            color: white;
+        }
+        
+        .mode-btn.sprint {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        }
+        
+        .mode-btn.standard {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .mode-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.4);
+        }
+        
+        .mode-desc {
+            font-size: 12px;
+            opacity: 0.9;
+            display: block;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.3);
+        }
+        
+        .practice-btn {
+            background: #f1c40f;
+            border: 3px solid #d4ac0d;
+            color: #333;
+            margin-left: 15px;
+        }
+        
+        .stats-section {
+            margin-top: 25px;
+        }
+        
+        .stats-section h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: #8b7355;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #d4c4a8;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.2);
+        }
+        
+        .score-list {
+            list-style: none;
+        }
+        
+        .score-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            margin-bottom: 8px;
+        }
+        
+        .score-item .score {
+            font-weight: bold;
+            color: #2e8b57;
+        }
+        
+        .score-item .date {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .no-scores {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 9px;
+        }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            border: 2px solid;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .mode-badge {
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0 8px;
+        }
+        
+        .mode-badge.sprint {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .mode-badge.standard {
+            background: #6f42c1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static "audio/buttons.mp3" %}" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    <div class="title-box">
+        <div class="game-icon">🎮</div>
+        <h1>HelpingHand Dashboard</h1>
+        <p class="welcome">Welcome to HelpingHand!</p>
+        <p class="welcome" style="font-size: 18px; margin-top: 10px;">Welcome, {{ request.user.username }}!</p>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="header">
+            <div class="nav-links">
+                <a href="{% url 'home' %}" class="home">Home</a>
+                <a href="{% url 'profile' %}" class="profile">Profile</a>
+                <a href="{% url 'leaderboard' %}" class="leaderboard">Leaderboard</a>
+                <a href="{% url 'logout' %}" class="logout">Logout</a>
+            </div>
+        </div>
+        
+        <div class="play-section">
+            <h2>Ready to Play?</h2>
+            <p style="color: white; margin-bottom: 20px;">Choose your game mode!</p>
+            <div class="mode-buttons">
+                <a href="{% url 'game' %}?mode=sprint" class="mode-btn sprint">
+                    <span class="mode-title">⚡ Short Word Sprint</span>
+                    <span class="mode-desc">3-4 letter words • 15s per word</span>
+                </a>
+                <a href="{% url 'game' %}?mode=standard" class="mode-btn standard">
+                    <span class="mode-title">🎯 Standard Challenge</span>
+                    <span class="mode-desc">Up to 8 letters • 25s per word</span>
+                </a>
+            </div>
+            <p style="color: #ffd700; font-size: 10px; margin-top: 15px; font-family: 'Press Start 2P', cursive;">
+                🔥 Streak Bonus: Sprint +10s | Standard +20s
+            </p>
+        </div>
+        
+        <div class="stats-section">
+            <h3>Your Recent Scores</h3>
+            {% if user_scores %}
+            <ul class="score-list">
+                {% for score in user_scores %}
+                <li class="score-item">
+                    <span class="score">{{ score.score }} points</span>
+                    <span class="mode-badge {% if score.game_mode == 'sprint' %}sprint{% else %}standard{% endif %}">
+                        {% if score.game_mode == 'sprint' %}⚡ SPRINT{% else %}🎯 STANDARD{% endif %}
+                    </span>
+                    <span class="date">{{ score.created_at|date:"M d, Y H:i" }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="no-scores">No games played yet. Start playing to see your scores!</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.transition = 'opacity 0.5s ease';
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+        });
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                    console.log('BGM: Muted');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                    console.log('BGM: Unmuted');
+                }
+            });
+        }
+        
+        // Start BGM on page load (play by default after login)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            console.log('BGM: Page loaded, bgmState:', bgmState, 'bgmMuted:', bgmMuted);
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            } else {
+                bgmAudio.muted = false;
+                isMuted = false;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                }
+            }
+            
+            // Try setting src directly
+            bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+            
+            // Test if audio can be played at all
+            bgmAudio.addEventListener('canplaythrough', function() {
+                console.log('BGM: Audio can play through');
+            });
+            
+            bgmAudio.addEventListener('error', function(e) {
+                console.log('BGM: Audio error:', e);
+            });
+            
+            // Play BGM unless it was explicitly stopped (game was played)
+            if (bgmState !== 'stopped') {
+                console.log('BGM: Attempting to play...');
+                const playPromise = bgmAudio.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log('BGM: Started playing successfully');
+                        sessionStorage.setItem('bgmState', 'playing');
+                    }).catch(err => {
+                        console.log('BGM: Play failed, trying on user interaction:', err);
+                        // Try to play on first user interaction
+                        document.addEventListener('click', function playOnFirstClick() {
+                            console.log('BGM: Trying to play on click');
+                            bgmAudio.play().then(() => {
+                                console.log('BGM: Started playing on click');
+                                sessionStorage.setItem('bgmState', 'playing');
+                            }).catch(err => {
+                                console.log('BGM: Still failed on click:', err);
+                            });
+                            document.removeEventListener('click', playOnFirstClick);
+                        }, { once: true });
+                    });
+                }
+            }
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

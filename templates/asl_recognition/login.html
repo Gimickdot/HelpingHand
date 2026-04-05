@@ -1,0 +1,428 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ASL Game</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: url('/static/images/bg.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .auth-container {
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            padding: 35px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+        }
+        
+        .game-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: #8b7355;
+            font-size: 16px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 12px;
+        }
+        
+        .form-group {
+            margin-bottom: 18px;
+        }
+        
+        label {
+            display: block;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            color: #8b7355;
+            margin-bottom: 8px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #d4c4a8;
+            font-size: 14px;
+            background: #faf5e8;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #8b7355;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: #27ae60;
+            border: 2px solid #1a8a4b;
+            color: white;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .google-btn {
+            width: 100%;
+            padding: 14px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: #db4437;
+            border: 2px solid #c23321;
+            color: white;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            margin-top: 8px;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+            line-height: 1.2;
+        }
+        
+        .google-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .messages {
+            margin-bottom: 20px;
+        }
+        
+        .message {
+            padding: 10px;
+            margin-bottom: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            border: 2px solid;
+            animation: fadeOut 0.5s ease 4.5s forwards;
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: #f5c6cb;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border-color: #c3e6cb;
+        }
+        
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+        }
+        
+        .links a {
+            color: #8b7355;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        
+        .home-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            color: white;
+            text-decoration: none;
+            background: #4a90e2;
+            border: 2px solid #357abd;
+            padding: 15px 20px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+        }
+        
+        .home-link:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: #f5e6c8;
+            border: 4px solid #8b7355;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            font-family: 'Press Start 2P', cursive;
+            color: #8b7355;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .modal-message {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .modal-email {
+            background: #faf5e8;
+            border: 2px solid #d4c4a8;
+            padding: 10px;
+            margin: 10px 0;
+            font-weight: 600;
+            color: #8b7355;
+            word-break: break-all;
+        }
+        
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            background: #e74c3c;
+            border: 2px solid #c0392b;
+            color: white;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            transition: all 0.1s;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+            line-height: 1.2;
+        }
+        
+        .modal-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        
+        .modal-btn.secondary {
+            background: #95a5a6;
+            border: 2px solid #7f8c8d;
+        }
+        
+        .forgot-password-link {
+            display: inline;
+            font-size: 11px;
+            color: #8b7355;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static 'audio/bgm.mp3' %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static 'audio/buttons.mp3' %}" type="audio/mpeg">
+    </audio>
+    <a href="{% url 'index' %}" class="home-link">← BACK</a>
+    
+    <div class="auth-container">
+        <span class="game-icon">🎮</span>
+        <h1>Welcome to HelpingHand</h1>
+        <p class="subtitle">Login to practice your ASL Hand Signs</p>
+        
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                {% if 'Welcome back' not in message.message %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_email">Email</label>
+                <input type="email" name="email" id="id_email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password">Password</label>
+                <input type="password" name="password" id="id_password" required>
+            </div>
+            
+            <button type="submit">Login</button>
+        </form>
+
+        <div style="margin: 15px 0; text-align: center; position: relative;">
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #8b7355;"></div>
+            <span style="background: #8b7355; color: white; padding: 5px 10px; font-family: 'Press Start 2P', cursive; font-size: 8px; position: relative; z-index: 1;">OR</span>
+        </div>
+
+        <div style="margin-top: 8px;">
+            <a href="/accounts/google/login/" class="google-btn">🔗 Sign up with Google</a>
+        </div>
+
+        <div class="links">
+            <p><a href="/accounts/password/reset/" class="forgot-password-link">Forgot your password?</a></p>
+            <p>Don't have an account? <a href="{% url 'register' %}">Register here</a></p>
+        </div>
+    </div>
+    
+    <!-- Account Exists Modal -->
+    <div id="accountExistsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-icon">⚠️</div>
+            <h2 class="modal-title">Account Already Exists</h2>
+            <p class="modal-message">An account with this email is already registered:</p>
+            <div class="modal-email" id="modalEmail"></div>
+            <p class="modal-message">Please log in with your password or reset your password if you've forgotten it.</p>
+            <a href="/accounts/password/reset/" class="modal-btn" id="forgotPasswordBtn">Forgot Password</a>
+            <button type="button" class="modal-btn secondary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <script>
+        // Check for account_exists parameter and show modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const accountExists = urlParams.get('account_exists');
+            const email = urlParams.get('email');
+            
+            if (accountExists === 'true') {
+                const modal = document.getElementById('accountExistsModal');
+                const emailDisplay = document.getElementById('modalEmail');
+                const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+                
+                if (email) {
+                    emailDisplay.textContent = email;
+                    // Update forgot password link with email pre-filled
+                    forgotPasswordBtn.href = '/accounts/password/reset/?email=' + encodeURIComponent(email);
+                }
+                
+                modal.classList.add('active');
+                
+                // Play error sound
+                const buttonSound = document.getElementById('buttonSound');
+                if (buttonSound) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.play().catch(() => {});
+                }
+            }
+        });
+        
+        function closeModal() {
+            const modal = document.getElementById('accountExistsModal');
+            modal.classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('accountExistsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+        
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(function(msg) {
+                setTimeout(function() {
+                    msg.style.opacity = '0';
+                    msg.style.transition = 'opacity 0.5s ease';
+                    setTimeout(function() {
+                        msg.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+        });
+        
+        // Audio
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(() => {});
+                });
+            });
+            
+            // BGM
+            bgmAudio.volume = 0.3;
+            bgmAudio.play().catch(() => {});
+        });
+    </script>
+</body>
+</html>

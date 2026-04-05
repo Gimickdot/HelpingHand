@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASL Sign Language Recognition</title>
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background: url('{% static "images/bg.png" %}') center center/cover no-repeat fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            background: #E6D1B3;
+            border-radius: 10px;
+            border: 3px solid #8B4513;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            color: #333;
+        }
+        
+        
+        .hand-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .hand-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        
+        .title-box {
+            background: #E6D1B3;
+            border: 3px solid #8B4513;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 1.8em;
+            margin: 0;
+            color: #FFD700;
+            text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
+            line-height: 1.2;
+        }
+        
+        .intro-text {
+            font-size: 1em;
+            line-height: 1.6;
+            margin: 0;
+            color: #FFFFFF;
+            text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #3CB371;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 0px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: 2px solid #2E8B57;
+            box-shadow: 4px 4px 0px #A0522D;
+            transition: all 0.1s ease;
+            text-transform: none;
+            letter-spacing: normal;
+            margin: 20px 10px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 5px 5px 0px #A0522D;
+            background: #3CB371;
+        }
+        
+        .cta-button:active {
+            transform: translateY(2px);
+            box-shadow: 2px 2px 0px #A0522D;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+        
+        .star:nth-child(1) { width: 2px; height: 2px; top: 10%; left: 20%; animation-delay: 0s; }
+        .star:nth-child(2) { width: 3px; height: 3px; top: 20%; left: 80%; animation-delay: 1s; }
+        .star:nth-child(3) { width: 2px; height: 2px; top: 30%; left: 60%; animation-delay: 2s; }
+        .star:nth-child(4) { width: 1px; height: 1px; top: 40%; left: 40%; animation-delay: 0.5s; }
+        .star:nth-child(5) { width: 3px; height: 3px; top: 60%; left: 70%; animation-delay: 1.5s; }
+        .star:nth-child(6) { width: 2px; height: 2px; top: 80%; left: 30%; animation-delay: 2.5s; }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+                padding: 30px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .intro-text {
+                font-size: 0.9em;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .cta-button {
+                font-size: 1em;
+                padding: 15px 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars">
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+        <div class="star"></div>
+    </div>
+    
+    <div class="container">
+        <div class="title-box">
+            <div class="hand-icon"><img src="{% static 'images/icon (2).png' %}" alt="Hand Icon"></div>
+            <h1>Welcome to HelpingHand!</h1>
+            <p class="intro-text">
+                Learn ASL like never before. Practice hand signs and earn points on our gamified ASL learning platform. Your fingers become controllers. Ready to sign and score? Get started now!
+            </p>
+        </div>
+        
+        <div class="buttons-container">
+            <a href="{% url 'login' %}" class="cta-button">Login</a>
+            <a href="{% url 'register' %}" class="cta-button">Register</a>
+        </div>
+    </div>
+    
+    <!-- Audio Elements -->
+    <audio id="bgmAudio" loop preload="auto">
+        <source src="{% static "audio/bgm.mp3" %}" type="audio/mpeg">
+    </audio>
+    <audio id="buttonSound" preload="auto">
+        <source src="{% static 'audio/buttons.mp3' %}" type="audio/mpeg">
+    </audio>
+    
+    <!-- Mute/Unmute BGM button -->
+    <button id="muteBGM" style="position: fixed; top: 10px; right: 10px; background: #4a90e2; color: white; padding: 8px 12px; border: none; border-radius: 5px; z-index: 9999; cursor: pointer;">🔊 BGM ON</button>
+    
+    <script>
+        // Audio elements
+        const bgmAudio = document.getElementById('bgmAudio');
+        const buttonSound = document.getElementById('buttonSound');
+        
+        // Mute/Unmute button functionality
+        const muteBGM = document.getElementById('muteBGM');
+        let isMuted = false;
+        
+        if (muteBGM) {
+            muteBGM.addEventListener('click', function() {
+                isMuted = !isMuted;
+                if (isMuted) {
+                    bgmAudio.muted = true;
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                    sessionStorage.setItem('bgmMuted', 'true');
+                    console.log('BGM: Muted');
+                } else {
+                    bgmAudio.muted = false;
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                    sessionStorage.setItem('bgmMuted', 'false');
+                    console.log('BGM: Unmuted');
+                }
+            });
+        }
+        
+        // Start BGM on page load (play by default)
+        window.addEventListener('load', function() {
+            const bgmState = sessionStorage.getItem('bgmState');
+            const bgmMuted = sessionStorage.getItem('bgmMuted');
+            
+            bgmAudio.volume = 0.3;
+            bgmAudio.src = '{% static "audio/bgm.mp3" %}';
+            
+            // Set mute state from sessionStorage
+            if (bgmMuted === 'true') {
+                bgmAudio.muted = true;
+                isMuted = true;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔇 BGM OFF';
+                    muteBGM.style.background = '#e74c3c';
+                }
+            } else {
+                bgmAudio.muted = false;
+                isMuted = false;
+                if (muteBGM) {
+                    muteBGM.textContent = '🔊 BGM ON';
+                    muteBGM.style.background = '#4a90e2';
+                }
+            }
+            
+            // Play BGM unless it was explicitly stopped (game was played)
+            if (bgmState !== 'stopped') {
+                bgmAudio.play().then(() => {
+                    console.log('BGM: Started playing successfully');
+                    sessionStorage.setItem('bgmState', 'playing');
+                }).catch(err => {
+                    console.log('BGM: Play failed, trying on user interaction:', err);
+                    document.addEventListener('click', function playOnFirstClick() {
+                        bgmAudio.play().then(() => {
+                            console.log('BGM: Started playing on click');
+                            sessionStorage.setItem('bgmState', 'playing');
+                        }).catch(err => {
+                            console.log('BGM: Still failed on click:', err);
+                        });
+                        document.removeEventListener('click', playOnFirstClick);
+                    }, { once: true });
+                });
+            }
+        });
+        
+        // Save BGM state before page unload
+        window.addEventListener('beforeunload', function() {
+            if (!bgmAudio.paused) {
+                sessionStorage.setItem('shouldPlayBgm', 'true');
+                sessionStorage.setItem('bgmCurrentTime', bgmAudio.currentTime.toString());
+            } else {
+                sessionStorage.setItem('shouldPlayBgm', 'false');
+                sessionStorage.setItem('bgmState', 'stopped');
+            }
+        });
+        
+        // Add button click sounds
+        document.addEventListener('DOMContentLoaded', function() {
+            const bgmAudio = document.getElementById('bgmAudio');
+            const buttonSound = document.getElementById('buttonSound');
+            const buttons = document.querySelectorAll('a, button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    buttonSound.currentTime = 0;
+                    buttonSound.volume = 0.5;
+                    buttonSound.play().catch(err => console.log('Button sound failed:', err));
+                });
+            });
+        });
+    </script>
+</body>
+</html>

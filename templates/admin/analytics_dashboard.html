@@ -1,0 +1,369 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{{ dark_admin_css }}">
+<style>
+    body {
+        background: #1a1a1a !important;
+        overflow-x: hidden;
+    }
+    
+    #content-main {
+        background: #1a1a1a;
+        max-height: calc(100vh - 100px);
+        overflow-y: auto;
+    }
+    
+    .module h1 {
+        display: block !important;
+        width: 100% !important;
+        clear: both !important;
+        float: none !important;
+        margin-bottom: 18px !important;
+    }
+    
+    .dashboard-container {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin: 18px 0;
+        clear: both !important;
+        width: 100% !important;
+    }
+    
+    .stat-card {
+        background: #2d2d2d;
+        border: 1px solid #444;
+        border-radius: 4px;
+        padding: 18px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .stat-number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 6px;
+    }
+    
+    .stat-label {
+        font-size: 13px;
+        color: #b0b0b0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #444;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 8px 0;
+    }
+    
+    .progress-fill {
+        height: 100%;
+        background: #4a90e2;
+        transition: width 0.3s ease;
+    }
+    
+    .chart-container {
+        background: #2d2d2d;
+        border: 1px solid #444;
+        border-radius: 4px;
+        padding: 20px;
+        margin: 18px 0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    .chart-container h1,
+    .chart-container h2 {
+        color: #ffffff;
+        margin: 0 0 12px 0;
+        font-size: 18px;
+    }
+    
+    .activity-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 18px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .activity-grid .chart-container {
+        width: 100%;
+        box-sizing: border-box;
+        max-width: 100%;
+    }
+    
+    .activity-item {
+        padding: 10px;
+        border-bottom: 1px solid #444;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-item strong,
+    .activity-item small {
+        color: #ffffff;
+    }
+    
+    .badge {
+        padding: 3px 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    
+    .badge-success { background: #27ae60; color: white; }
+    .badge-warning { background: #f39c12; color: white; }
+    .badge-danger { background: #e74c3c; color: white; }
+    .badge-info { background: #3498db; color: white; }
+    
+    .quick-actions {
+        display: flex;
+        gap: 10px;
+        margin: 18px 0;
+        flex-wrap: wrap;
+    }
+    
+    .action-btn {
+        padding: 8px 14px;
+        background: #4a90e2;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+    
+    .action-btn:hover {
+        background: #357abd;
+        color: white;
+    }
+    
+    .mode-distribution {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        margin: 12px 0;
+    }
+    
+    .mode-stat {
+        flex: 1;
+        text-align: center;
+        padding: 18px;
+        border-radius: 4px;
+        background: #2d2d2d;
+        border: 1px solid #444;
+        color: #ffffff;
+    }
+    
+    .mode-stat div:first-child {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+    
+    .mode-stat div:nth-child(2) {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+    
+    .mode-stat div:last-child {
+        font-size: 13px;
+    }
+    
+    .sprint-mode { background: #e67e22; border-color: #d35400; color: white; }
+    .standard-mode { background: #8e44ad; border-color: #7d3c98; color: white; }
+    
+    .activity-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+    
+    @media (max-width: 1200px) {
+        .dashboard-container {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 900px) {
+        .dashboard-container {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .activity-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 600px) {
+        .dashboard-container {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .quick-actions {
+            flex-direction: column;
+        }
+        
+        .mode-distribution {
+            flex-direction: column;
+        }
+        
+        .stat-card {
+            padding: 15px;
+        }
+        
+        .stat-number {
+            font-size: 24px;
+        }
+        
+        .chart-container h1,
+        .chart-container h2 {
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="module">
+        <h1 style="color: #ffffff; font-size: 20px; margin-bottom: 18px;">📊 ASL Learning Analytics Dashboard</h1>
+        
+        <!-- Quick Stats -->
+        <div class="dashboard-container">
+            <div class="stat-card">
+                <div class="stat-number">{{ total_users }}</div>
+                <div class="stat-label">Total Users</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ active_users_7_days }}</div>
+                <div class="stat-label">Active Users (7 Days)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ active_users_7_days_percentage }}%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ total_games }}</div>
+                <div class="stat-label">Total Games Played</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ games_this_week }}</div>
+                <div class="stat-label">Games This Week</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ games_this_week_percentage }}%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ games_today }}</div>
+                <div class="stat-label">Games Today</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ games_today_percentage }}%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ avg_score }}</div>
+                <div class="stat-label">Average Score</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ avg_score_percentage }}%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ high_score }}</div>
+                <div class="stat-label">High Score</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ high_score_percentage }}%"></div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-number">{{ active_users_today }}</div>
+                <div class="stat-label">Active Users Today</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: {{ active_users_percentage }}%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Mode Distribution -->
+        <div class="chart-container">
+            <h2>🎮 Game Mode Distribution</h2>
+            <div class="mode-distribution">
+                <div class="mode-stat sprint-mode">
+                    <div>⚡</div>
+                    <div>{{ sprint_count }}</div>
+                    <div>Sprint Games</div>
+                </div>
+                <div class="mode-stat standard-mode">
+                    <div>🎯</div>
+                    <div>{{ standard_count }}</div>
+                    <div>Standard Games</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity - Full Width -->
+        <div class="activity-grid" style="grid-template-columns: 1fr;">
+            <div class="chart-container" style="width: 100%;">
+                <h2>🏆 Recent Game Scores</h2>
+                <div class="activity-list">
+                    {% for score in recent_scores %}
+                    <div class="activity-item">
+                        <div>
+                            <strong>{{ score.user.username }}</strong>
+                            <br>
+                            <small>{{ score.get_game_mode_display }} - {{ score.score }} pts</small>
+                        </div>
+                        <div>
+                            <span class="badge badge-success">
+                                ✓ Completed
+                            </span>
+                            <br>
+                            <small>{{ score.created_at|date:"M d, H:i" }}</small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p style="color: #b0b0b0; font-size: 13px;">No recent game scores.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Auto-refresh stats every 30 seconds
+    setTimeout(() => {
+        window.location.reload();
+    }, 30000);
+</script>
+{% endblock %}

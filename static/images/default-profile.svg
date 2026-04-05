@@ -1,0 +1,12 @@
+<!-- Default profile picture placeholder -->
+<svg width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <circle cx="75" cy="75" r="75" fill="url(#gradient)"/>
+    <circle cx="75" cy="60" r="25" fill="white" opacity="0.9"/>
+    <ellipse cx="75" cy="110" rx="35" ry="25" fill="white" opacity="0.9"/>
+</svg>
