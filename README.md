@@ -1,5 +1,5 @@
 
-# ASL Hand Sign Recognition
+# HelpingHand, An ASL Learning Game
 
 This project uses [MediaPipe](https://google.github.io/mediapipe/) to extract hand landmarks and a **Random Forest** model to recognize American Sign Language (ASL) alphabet letters. It also includes **real-time sign recognition** using your webcam.
 
